@@ -214,6 +214,45 @@ const roleRules = body('role')
     });
 
 
+const hospitalSpecializationsRules = body('specializations')
+    .isArray().withMessage('Specializations must be an array')
+    .notEmpty().withMessage('Specializations cannot be empty')
+    .custom(value => {
+        return value.every(item => typeof item === 'string');
+    }).withMessage('Each specialization must be a string');
+
+
+const validateHospitalData = [
+    body('specializations')
+        .isArray().withMessage('Specializations must be an array')
+        .notEmpty().withMessage('Specializations cannot be empty')
+        .custom(value => {
+            return value.every(item => typeof item === 'string');
+        }).withMessage('Each specialization must be a string'),
+    body('hospital_name')
+        .notEmpty().withMessage('Hospital name is required'),
+
+    body('address')
+        .notEmpty().withMessage('Address is required'),
+
+    body('contact_number')
+        .matches(/^\+?[0-9]{7,15}$/).withMessage('Contact number must be a valid phone number'),
+    body('capacity')
+        .isInt({ min: 0 }).withMessage('Capacity must be a positive integer'),
+
+    body('available_beds')
+        .isInt({ min: 0 }).withMessage('Available beds must be a positive integer')
+        .custom((value, { req }) => {
+            if (value > req.body.capacity) {
+                throw new Error('Available beds cannot exceed hospital capacity');
+            }
+            return true;
+        })
+];
+
+
+
+
 module.exports = {
     nameValidation, lastNameValidation, emailValidation, passwordValidation, phoneValidation, genderValidation,
     dobValidation, optionalNameValidation, optionalLastNameValidation, optionalEmailValidation, optionalPhoneValidation, optionalGenderValidation, optionalDOBValidation, optionalAddressValidation, appointment_dateValidatoin, appointment_timeValidation, user_idRules, tokenRules,

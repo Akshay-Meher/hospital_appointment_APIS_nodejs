@@ -6,6 +6,7 @@ const appointmentRoutes = require('./appointmentRoutes');
 const resetPasswordRoutes = require('./resetPasswordRoutes');
 const emailVerificationRoutes = require('./emailVerificationRoutes');
 const firebaseRoutes = require('./firebaseRoutes');
+const hospitalRoutes = require('./hospitalRoutes');
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use('/appointment', appointmentRoutes);
 router.use('/reset-password', resetPasswordRoutes);
 router.use('/email', emailVerificationRoutes);
 router.use('/firebase', firebaseRoutes);
+router.use('/hospital', hospitalRoutes);
 
 module.exports = router;

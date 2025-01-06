@@ -14,7 +14,7 @@ router.post('/confirm', confirmAppointmentRules, checkValidationMidd, isLoginMid
 
 router.post('/cancle', confirmAppointmentRules, checkValidationMidd, isLoginMiddleware, cancelAppointment);
 
-router.get('/get-details', getAppointmentsRules, checkValidationMidd, getAppointments)
+router.get('/get-details', getAppointmentsRules, checkValidationMidd, getAppointments);
 
 
 module.exports = router;

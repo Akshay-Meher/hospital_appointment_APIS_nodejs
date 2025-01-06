@@ -4,25 +4,19 @@ const { sendResponse } = require('../../services/responseHandler');
 const { CREATED, OK, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../../services/statusCodes');
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const {
-    registeredSuccessfullyMessage,
-    notFound,
-    updatedSuccessfully
+    registeredSuccessfullyMessage, notFound, updatedSuccessfully
 } = require('../../utils/responseMessages');
 const logger = require('../../utils/logger');
 
 exports.createHospital = async (req, res) => {
-    const { name, address, phone } = req.body;
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return sendResponse(res, 'BAD_REQUEST', 'Validation Errors', errors.array());
-    }
+    const { hostpital_name, address, contact_number, specializations, capacity, available_beds } = req.body;
+    console.log("createHospital", req.body);
 
     try {
         const modelWithMethod = {
             modelName: "Hospital",
             methodName: "create",
-            args: { name, address, phone }
+            args: { hostpital_name, address, contact_number, specializations, capacity, available_beds }
         };
 
         const hospital = await executeModelMethod(modelWithMethod);
@@ -82,11 +76,6 @@ exports.updateHospital = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return sendResponse(res, 'BAD_REQUEST', 'Validation Errors', errors.array());
-    }
-
     try {
         const hospital = await executeModelMethod({
             modelName: "Hospital",
@@ -117,7 +106,7 @@ exports.updateHospital = async (req, res) => {
 
     } catch (err) {
         logger.error(`updateHospital : ${err.message}`);
-        return sendResponse(res, "INTERNAL_SERVER_ERROR", "INTERNAL SERVER ERROR");
+        return sendResponse(res, "INTERNAL_SERVER_ERROR");
     }
 };
 
@@ -149,6 +138,6 @@ exports.deleteHospital = async (req, res) => {
 
     } catch (err) {
         logger.error(`deleteHospital : ${err.message}`);
-        return sendResponse(res, "INTERNAL_SERVER_ERROR", "INTERNAL SERVER ERROR");
+        return sendResponse(res, "INTERNAL_SERVER_ERROR");
     }
 };

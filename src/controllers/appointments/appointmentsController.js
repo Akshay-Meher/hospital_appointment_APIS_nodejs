@@ -2,7 +2,7 @@ const { sendEmail } = require('../../services/email/emailSender');
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const { sendResponse } = require('../../services/responseHandler');
 const logger = require('../../utils/logger');
-const { doestNotExist, allreadyBooked, appBookSuccess } = require('../../utils/responseMessages');
+const { doestNotExist, allreadyBooked, appBookSuccess, notFound } = require('../../utils/responseMessages');
 // const { sendAppointmentConfirmation } = require('../../utils/sendAppointmentConfirmation');
 const { Appointment, Patient, Doctor, Sequelize } = require('../../models');
 const { Op, fn, col } = require('sequelize');
@@ -111,7 +111,7 @@ const getAppointments = async (req, res) => {
             : { model: Patient, as: 'patientDetails', attributes: { exclude: ['password'] } };
 
 
-        console.log("modelname", modelName, role, id);
+        // console.log("modelname", modelName, role, id);
 
         const appointments = await executeModelMethod({
             modelName,
@@ -128,7 +128,7 @@ const getAppointments = async (req, res) => {
         });
 
         if (!appointments) {
-            return sendResponse(res, "NOT_FOUND", null, "No appointments found.");
+            return sendResponse(res, "NOT_FOUND", null, notFound('appointments'));
         }
 
         logger.info(`Appointments fetched for ${role} with ID: ${id}`);
@@ -141,83 +141,3 @@ const getAppointments = async (req, res) => {
 };
 
 module.exports = { getAppointments, bookAppointment };
-
-
-
-
-
-
-
-// const { executeModelMethod } = require('../../services/executeModelMethod');
-// const { sendAppointmentConfirmation } = require('../../services/email/emailSender');
-
-// const createAppointment = async (req, res) => {
-//     const { patient_id, doctor_id, appointment_date, appointment_time, status } = req.body;
-
-//     try {
-//         // Create the appointment
-//         const appointment = await executeModelMethod({
-//             modelName: 'Appointment',
-//             methodName: 'create',
-//             args: {
-//                 patient_id,
-//                 doctor_id,
-//                 appointment_date,
-//                 appointment_time,
-//                 status: status || 'Pending',
-//             },
-//         });
-
-//         // Fetch the detailed appointment with patient and doctor info
-//         const detailedAppointment = await executeModelMethod({
-//             modelName: 'Appointment',
-//             methodName: 'findOne',
-//             args: {
-//                 where: { id: appointment.id },
-//                 include: [
-//                     {
-//                         model: require('../../models/Patient'),
-//                         as: 'patient',
-//                         attributes: ['id', 'name', 'email'],
-//                     },
-//                     {
-//                         model: require('../../models/Doctor'),
-//                         as: 'doctor',
-//                         attributes: ['id', 'name', 'email', 'specialization'],
-//                     },
-//                 ],
-//             },
-//         });
-
-//         if (!detailedAppointment) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'Appointment not found after creation',
-//             });
-//         }
-
-//         // Extract the required details
-//         const recipient = detailedAppointment.patient.email;
-//         const name = detailedAppointment.patient.name;
-//         const doctor = detailedAppointment.doctor.name;
-//         const date = detailedAppointment.appointment_date;
-//         const time = detailedAppointment.appointment_time;
-
-//         // Send the appointment confirmation email
-//         await sendAppointmentConfirmation(recipient, name, date, time, doctor);
-
-//         return res.status(201).json({
-//             success: true,
-//             message: 'Appointment created successfully and confirmation email sent',
-//             data: detailedAppointment,
-//         });
-//     } catch (error) {
-//         console.error('Error creating appointment:', error);
-//         return res.status(500).json({
-//             success: false,
-//             message: 'Failed to create appointment',
-//             error: error.message,
-//         });
-//     }
-// };
-
