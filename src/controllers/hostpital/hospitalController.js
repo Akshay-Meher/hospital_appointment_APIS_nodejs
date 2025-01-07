@@ -9,14 +9,14 @@ const {
 const logger = require('../../utils/logger');
 
 exports.createHospital = async (req, res) => {
-    const { hostpital_name, address, contact_number, specializations, capacity, available_beds } = req.body;
+    const { hospital_name, address, contact_number, specializations, capacity, available_beds } = req.body;
     console.log("createHospital", req.body);
 
     try {
         const modelWithMethod = {
             modelName: "Hospital",
             methodName: "create",
-            args: { hostpital_name, address, contact_number, specializations, capacity, available_beds }
+            args: { hospital_name, address, contact_number, specializations, capacity, available_beds }
         };
 
         const hospital = await executeModelMethod(modelWithMethod);
