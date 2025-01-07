@@ -24,7 +24,11 @@ module.exports = (sequelize, DataTypes) => {
     admit_date: DataTypes.DATE,
     discharge_date: DataTypes.DATE,
     status: DataTypes.STRING,
-    notes: DataTypes.TEXT
+    notes: DataTypes.TEXT,
+    is_deleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
   }, {
     sequelize,
     modelName: 'Admit',

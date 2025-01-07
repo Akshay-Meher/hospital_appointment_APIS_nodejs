@@ -1,3 +1,5 @@
+const logger = require("../../utils/logger");
+const { sendResponse } = require("../responseHandler");
 const { admin } = require("./firebase-admin");
 
 
@@ -21,20 +23,15 @@ const sendFirebaseNotification = async (message) => {
             .send(message)
             .then((response) => {
                 console.log("Notification sent successfully:", response);
-                res
-                    .status(200)
-                    .json({
-                        message: "Notification send successfully",
-                        response: response,
-                    });
             })
             .catch((error) => {
                 console.error("Error sending notification:", error);
-                res.status(500).send("Error sending notification");
+                logger.error(`Error sending notification ${err.message}`);
             });
 
     } catch (error) {
         console.log("error: sendFirebaseNotification", error);
+        logger.error(`Error sending notification ${err.message}`);
     }
 }
 

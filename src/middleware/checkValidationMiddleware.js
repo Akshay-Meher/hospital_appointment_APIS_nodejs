@@ -3,6 +3,7 @@ const { sendResponse } = require('../services/responseHandler');
 
 const checkValidationMidd = (req, res, next) => {
     const errors = validationResult(req);
+    // console.log("registerPatient", req.body);
     if (!errors.isEmpty()) {
         // const formattedErrors = errors.array().reduce((acc, error) => {
         //     acc[error.param] = error.msg;

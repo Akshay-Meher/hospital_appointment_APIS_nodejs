@@ -140,6 +140,9 @@ const confirmedSuccessfully = (field_name) => `${field_name} confirmed successfu
 const cancelledSuccessfully = (field_name) => `${field_name} cancelled successfully.`;
 const OTP = (field_name) => `${field_name} must be exactly 6 characters long'`;
 const invalidOTP = (field_name) => `Invalid or expired ${field_name}.`;
+const validPhone = (field_name) => `${field_name} must be a valid phone number`;
+const positiveInteger = (field_name) => `${field_name} must be a positive integer`;
+const exceedCapacity = (field_name) => `${field_name} cannot exceed hospital capacity`;
 
 
 
@@ -149,5 +152,5 @@ module.exports = {
     doestNotExist, allreadyBooked, appBookSuccess, fieldRequired, tokenNotProvided, invalidToken, exceedChar, invalidFormate,
     passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate,
     appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, inccorect, updatedSuccessfully,
-    notFound, notAuthorized, confirmedSuccessfully, notAuthorizedLogin, cancelledSuccessfully, OTP, invalidOTP
+    notFound, notAuthorized, confirmedSuccessfully, notAuthorizedLogin, cancelledSuccessfully, OTP, invalidOTP, validPhone, positiveInteger, exceedCapacity
 };

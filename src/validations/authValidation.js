@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP } = require('../utils/responseMessages');
+const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP, validPhone, positiveInteger, exceedCapacity } = require('../utils/responseMessages');
 const { nameValidation, lastNameValidation, emailValidation, passwordValidation, phoneValidation, genderValidation, dobValidation, optionalNameValidation, optionalLastNameValidation, optionalEmailValidation, optionalPhoneValidation, optionalGenderValidation, optionalDOBValidation, optionalAddressValidation, appointment_dateValidatoin, appointment_timeValidation, user_idRules, roleRules, tokenRules } = require('./commonValidations');
 
 const validatePatient = [
@@ -147,31 +147,30 @@ const getTokenRules = [user_idRules, roleRules];
 // Hospital 
 
 const validateHospitalData = [
-    // body('specializations')
-    //     .notEmpty().withMessage('Specializations cannot be empty')
-    //     .custom(value => {
-    //         return value.every(item => typeof item === 'string');
-    //     }).withMessage('Each specialization must be a string'),
+    body('specializations')
+        .notEmpty().withMessage(fieldRequired("specializations"))
+        .custom(value => {
+            const json = JSON.parse(value);
+            return json.every(item => typeof item === 'string');
+        }).withMessage("specializations must be string!"),
     body('hospital_name')
-        .notEmpty().withMessage('Hospital name is required'),
+        .notEmpty().withMessage(fieldRequired('hospital_name')),
 
     body('address')
-        .notEmpty().withMessage('Address is required'),
+        .notEmpty().withMessage(fieldRequired('address')),
 
     body('contact_number')
-        .matches(/^\+?[0-9]{7,15}$/).withMessage('Contact number must be a valid phone number'),
+        .matches(/^\+?[0-9]{7,15}$/).withMessage(validPhone('contact_number')),
     body('capacity')
-        .isInt({ min: 0 }).withMessage('Capacity must be a positive integer'),
+        .isInt({ min: 0 }).withMessage(positiveInteger("capacity")),
 
     body('available_beds')
-        .isInt({ min: 0 }).withMessage('Available beds must be a positive integer')
+        .isInt({ min: 0 }).withMessage(positiveInteger('available_beds'))
         .custom((value, { req }) => {
-            console.log("req.body.capacity", req.body.capacity);
-            console.log("req.body.capacity", value);
             const capacity = parseInt(req.body.capacity, 10);
             const availableBeds = parseInt(value, 10);
             if (availableBeds > capacity) {
-                throw new Error('Available beds cannot exceed hospital capacity');
+                throw new Error(exceedCapacity('available_beds'));
             }
             return true;
         })
@@ -180,42 +179,76 @@ const validateHospitalData = [
 const validateHospitalDataUpdate = [
     body('specializations')
         .optional()
-        .isArray().withMessage('Specializations must be an array')
-        .notEmpty().withMessage('Specializations cannot be empty')
+        // .isArray().withMessage('Specializations must be an array')
+        .notEmpty().withMessage(fieldRequired("specializations"))
         .custom(value => {
-            return value.every(item => typeof item === 'string');
+            const json = JSON.parse(value);
+            return json.every(item => typeof item === 'string');
         }).withMessage('Each specialization must be a string'),
 
     body('hospital_name')
         .optional()
-        .notEmpty().withMessage('Hospital name is required'),
+        .notEmpty().withMessage(fieldRequired("hospital_name")),
 
     body('address')
         .optional()
-        .notEmpty().withMessage('Address is required'),
+        .notEmpty().withMessage(fieldRequired("address")),
 
     body('contact_number')
         .optional()
-        .matches(/^\+?[0-9]{7,15}$/).withMessage('Contact number must be a valid phone number'),
+        .matches(/^\+?[0-9]{7,15}$/).withMessage(validPhone('contact_number')),
 
     body('capacity')
         .optional()
-        .isInt({ min: 0 }).withMessage('Capacity must be a positive integer'),
+        .isInt({ min: 0 }).withMessage(positiveInteger("capacity")),
 
     body('available_beds')
         .optional()
-        .isInt({ min: 0 }).withMessage('Available beds must be a positive integer')
+        .isInt({ min: 0 }).withMessage(positiveInteger("available_beds"))
         .custom((value, { req }) => {
-            if (value > req.body.capacity) {
-                throw new Error('Available beds cannot exceed hospital capacity');
+            const capacity = parseInt(req.body.capacity, 10);
+            const availableBeds = parseInt(value, 10);
+            if (availableBeds > capacity) {
+                throw new Error(exceedCapacity('available_beds'));
             }
             return true;
         })
 ];
 
 
+
+const validateAdmitPatientRules = [
+    body('patient_id')
+        .notEmpty().withMessage(fieldRequired("patient_id"))
+        .isInt({ min: 1 })
+        .withMessage(positiveInteger("patient_id")),
+    body('doctor_id')
+        .notEmpty().withMessage(fieldRequired("doctor_id"))
+        .isInt({ min: 1 })
+        .withMessage(positiveInteger("doctor_id")), ,
+    body('hospital_id')
+        .notEmpty().withMessage(fieldRequired("hospital_id"))
+        .isInt({ min: 1 })
+        .withMessage(positiveInteger("hospital_id")),
+    body('admit_date')
+        .trim()
+        .notEmpty()
+        .withMessage(fieldRequired('admit_date'))
+        .isDate({ format: 'YYYY-MM-DD' })
+        .withMessage(validDateFormat('admit_date')),
+    body('status')
+        .isLength({ min: 3 })
+        .withMessage('Status must be a valid string of at least 3 characters'),
+    body('notes')
+        .optional()
+        .trim()
+        .isString()
+        .withMessage('Notes must be a string if provided'),
+];
+
+
 module.exports = {
     resetRules, loginPatientRules, validatePatient, validateDoctor, appointmentRules, saveTokenRules, getTokenRules,
     getAppointmentsRules, confirmAppointmentRules, verifyOTPRules, verifyOTPLenght, updatePatientRules, validateHospitalData,
-    validateHospitalDataUpdate
+    validateHospitalDataUpdate, validateAdmitPatientRules
 };

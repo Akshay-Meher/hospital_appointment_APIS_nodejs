@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     contact_number: DataTypes.STRING,
     specializations: DataTypes.JSON,
     capacity: DataTypes.INTEGER,
-    available_beds: DataTypes.INTEGER
+    available_beds: DataTypes.INTEGER,
+    is_deleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
   }, {
     sequelize,
     modelName: 'Hospital',

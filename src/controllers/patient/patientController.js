@@ -137,4 +137,4 @@ exports.getAllPatient = async (req, res) => {
         logger.error(`loginPatient : ${err.message}`);
         return sendResponse(res, 'INTERNAL_SERVER_ERROR');
     }
-}
+};

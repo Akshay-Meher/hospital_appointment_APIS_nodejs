@@ -27,6 +27,10 @@ module.exports = {
       available_beds: {
         type: Sequelize.INTEGER
       },
+      is_deleted: {
+        type: Sequelize.BOOLEAN,
+        default: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
