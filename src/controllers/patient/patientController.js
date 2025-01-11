@@ -8,7 +8,7 @@ const { FORBIDDEN, OK } = require('../../services/statusCodes');
 const generateToken = require('../../services/generateToken');
 const { comparePassword, hashPassword } = require('../../services/comparePassword');
 const { executeModelMethod } = require('../../services/executeModelMethod');
-const { emialExistsMessage, registeredSuccessfullyMessage, notFoundEmail, invalidCredential, loginSuccessful, notFound, updatedSuccessfully } = require('../../utils/responseMessages');
+const { emialExistsMessage, registeredSuccessfullyMessage, notFoundEmail, invalidCredential, loginSuccessful, notFound, updatedSuccessfully, tooManyfailedAttempts } = require('../../utils/responseMessages');
 const logger = require('../../utils/logger');
 const { where } = require('sequelize');
 
@@ -55,9 +55,42 @@ exports.loginPatient = async (req, res) => {
             return sendResponse(res, 'NOT_FOUND', notFoundEmail('patient'));
         }
 
+        const userId = patient.id;
+        const role = 'patient';
+
+        // Check if the record exists for the userId and role
+        const existingRecord = await executeModelMethod({
+            modelName: "LoginFailed",
+            methodName: "findOne",
+            args: { where: { userId, role, is_deleted: false } }
+        });
+
+        if (existingRecord && existingRecord.loginFailedCount >= 5) {
+            return sendResponse(res, "TOO_MANY_REQUESTS", tooManyfailedAttempts());
+        }
+
         const isPasswordValid = await comparePassword(password, patient.password);
 
         if (!isPasswordValid) {
+
+            if (existingRecord) {
+                //Increment loginFailedCount
+                const updatedRecord = await executeModelMethod({
+                    modelName: "LoginFailed",
+                    methodName: "update",
+                    args: [
+                        { loginFailedCount: existingRecord.loginFailedCount + 1 },
+                        { where: { userId, role, is_deleted: false } }
+                    ]
+                });
+            } else {
+                // Create a new record for the userId and role
+                const newRecord = await executeModelMethod({
+                    modelName: "LoginFailed",
+                    methodName: "create",
+                    args: { userId, role, loginFailedCount: 1 }
+                });
+            }
             return sendResponse(res, 'UNAUTHORIZED', invalidCredential());
         }
 
@@ -127,7 +160,10 @@ exports.getAllPatient = async (req, res) => {
         const modelWithMethod = {
             modelName: "Patient",
             methodName: "findAll",
-            args: { where: { is_deleted: false } }
+            args: {
+                where: { is_deleted: false },
+                attributes: { exclude: ['password'] }
+            }
         };
         const allPatient = await executeModelMethod(modelWithMethod);
         return sendResponse(res, 'OK', null, allPatient);

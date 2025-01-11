@@ -119,8 +119,7 @@ const router = express.Router();
  *                   example: "Internal Server Error."
  */
 
-// console.log('validateAdmitPatient', validateAdmitPatient);
-router.post('/admitPatient', admitPatient);
+router.post('/admitPatient', validateAdmitPatientRules, checkValidationMidd, admitPatient);
 
 
 module.exports = router;

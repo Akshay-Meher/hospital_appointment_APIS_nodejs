@@ -14,7 +14,6 @@ const confirmAppointment = async (req, res) => {
     const { appointment_id } = req.body;
     const doctor_id = req.user.id;
 
-    console.log("Login user", req.user);
 
     try {
         // Find the appointment

@@ -5,7 +5,7 @@ const { Op, where } = require('sequelize');
 const { executeModelMethod } = require('../services/executeModelMethod');
 const { sendResponse } = require('../services/responseHandler');
 const { sendOTPEmail } = require('../utils/sendAppointmentEmail');
-const { invalidOTP } = require('../utils/responseMessages');
+const { invalidOTP, notFound } = require('../utils/responseMessages');
 
 const sendOTP = async (req, res) => {
     try {
@@ -28,14 +28,30 @@ const sendOTP = async (req, res) => {
         const otp = generateOTP();
         const otpExpiration = calculateExpiration();
 
-        await executeModelMethod({
-            modelName,
-            methodName: "update",
-            args: [
-                { otp, otp_expiration: otpExpiration },
-                { where: { email, is_deleted: false } }
-            ]
-        })
+        const checkOtpExist = await executeModelMethod({
+            modelName: "OtpToken",
+            methodName: "findOne",
+            args: { where: { is_deleted: false, userId: user.id, role } }
+        });
+
+        // console.log("checkOtpExist", checkOtpExist);
+
+        if (checkOtpExist) {
+            await executeModelMethod({
+                modelName: "OtpToken",
+                methodName: "update",
+                args: [
+                    { otp, otpExpiration: otpExpiration },
+                    { where: { userId: user.id, role, is_deleted: false } }
+                ]
+            });
+        } else {
+            const createdOTP = await executeModelMethod({
+                modelName: "OtpToken",
+                methodName: "create",
+                args: { userId: user.id, role, otp, otpExpiration: otpExpiration },
+            });
+        }
 
         sendOTPEmail(email, otp);
 
@@ -63,34 +79,42 @@ const verifyOTP = async (req, res) => {
                 where: {
                     email,
                     is_deleted: false,
-                    otp,
-                    otp_expiration: { [Op.gt]: new Date() }
+                    // otp,
+                    // otp_expiration: { [Op.gt]: new Date() }
                 }
             }
         });
 
         if (!user) {
+            return sendResponse(res, "BAD_REQUEST", notFound(role + " User"));
+            // return sendResponse(res, "BAD_REQUEST", invalidOTP("OTP"));
+        }
+
+        const OTPRecord = await executeModelMethod({
+            modelName: "OtpToken",
+            methodName: "findOne",
+            args: {
+                where: {
+                    userId: user.id,
+                    role,
+                    is_deleted: false,
+                    otp,
+                    otpExpiration: { [Op.gt]: new Date() }
+                }
+            }
+        });
+
+
+        if (!OTPRecord) {
             return sendResponse(res, "BAD_REQUEST", invalidOTP("OTP"));
         }
 
-
-
-        await user.update({ is_email_verified: true, otp: null, otp_expiration: null });
-
-        await executeModelMethod({
-            modelName,
-            methodName: "update",
-            args: [
-                { is_email_verified: true, otp: null, otp_expiration: null },
-                { where: { email, is_deleted: false } }
-            ]
-        })
-
-        // res.status(200).json({ message: `${userType} email verified successfully.` });
+        await OTPRecord.update({ is_email_verified: true, otp: null, otpExpiration: null });
         return sendResponse(res, "OK", "email verified successfully");
+
     } catch (error) {
         logger.error(`Failed to verify OTP: ${error.message}`);
-        console.log("err", error);
+        console.log("error", error);
         return sendResponse(res, "INTERNAL_SERVER_ERROR");
         // res.status(500).json({ error: 'Failed to verify OTP. Please try again later.' });
 

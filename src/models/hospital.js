@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Hospital.init({
-    hostpital_name: DataTypes.STRING,
+    hospital_name: DataTypes.STRING,
     address: DataTypes.STRING,
     contact_number: DataTypes.STRING,
     specializations: DataTypes.JSON,

@@ -2,6 +2,9 @@ const { body } = require('express-validator');
 const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP, validPhone, positiveInteger, exceedCapacity } = require('../utils/responseMessages');
 const { nameValidation, lastNameValidation, emailValidation, passwordValidation, phoneValidation, genderValidation, dobValidation, optionalNameValidation, optionalLastNameValidation, optionalEmailValidation, optionalPhoneValidation, optionalGenderValidation, optionalDOBValidation, optionalAddressValidation, appointment_dateValidatoin, appointment_timeValidation, user_idRules, roleRules, tokenRules } = require('./commonValidations');
 
+
+const isDevEnv = process.env.NODE_ENV === 'development';
+
 const validatePatient = [
     nameValidation, lastNameValidation,
     emailValidation, passwordValidation, phoneValidation, genderValidation, dobValidation,
@@ -149,10 +152,25 @@ const getTokenRules = [user_idRules, roleRules];
 const validateHospitalData = [
     body('specializations')
         .notEmpty().withMessage(fieldRequired("specializations"))
+        // .isArray().withMessage('specializations must be an array')
+        // .custom(value => {
+        //     const json = JSON.parse(value);
+        //     return !Array.isArray(json);
+        // }).withMessage('specializations must be an array')
         .custom(value => {
+
             const json = JSON.parse(value);
-            return json.every(item => typeof item === 'string');
-        }).withMessage("specializations must be string!"),
+            if (!Array.isArray(json)) {
+                throw new Error("specializations must be an array");
+            }
+
+            const isValid = json.every(item => typeof item === 'string');
+            if (!isValid) {
+                throw new Error("Each specialization must be a string!");
+            }
+
+            return true;
+        }),
     body('hospital_name')
         .notEmpty().withMessage(fieldRequired('hospital_name')),
 
@@ -179,7 +197,7 @@ const validateHospitalData = [
 const validateHospitalDataUpdate = [
     body('specializations')
         .optional()
-        // .isArray().withMessage('Specializations must be an array')
+        .isArray().withMessage('Specializations must be an array')
         .notEmpty().withMessage(fieldRequired("specializations"))
         .custom(value => {
             const json = JSON.parse(value);
@@ -225,7 +243,7 @@ const validateAdmitPatientRules = [
     body('doctor_id')
         .notEmpty().withMessage(fieldRequired("doctor_id"))
         .isInt({ min: 1 })
-        .withMessage(positiveInteger("doctor_id")), ,
+        .withMessage(positiveInteger("doctor_id")),
     body('hospital_id')
         .notEmpty().withMessage(fieldRequired("hospital_id"))
         .isInt({ min: 1 })
@@ -246,9 +264,30 @@ const validateAdmitPatientRules = [
         .withMessage('Notes must be a string if provided'),
 ];
 
+const validateCreateOrder = [
+    body('orderId')
+        .trim()
+        .notEmpty().withMessage(fieldRequired('orderId')),
+
+    body('orderAmount')
+        .notEmpty().withMessage(fieldRequired('orderAmount'))
+        .isFloat({ gt: 0 }).withMessage(positiveInteger('orderAmount')),
+
+    body('customerEmail')
+        .trim()
+        .notEmpty().withMessage(fieldRequired('customerEmail'))
+        .isEmail().withMessage('Invalid email address'),
+
+    body('customerPhone')
+        .trim()
+        .notEmpty().withMessage(fieldRequired('customerPhone'))
+        .matches(/^[6-9]\d{9}$/).withMessage('Customer phone must be a valid 10-digit Indian number'),
+];
+
+
 
 module.exports = {
     resetRules, loginPatientRules, validatePatient, validateDoctor, appointmentRules, saveTokenRules, getTokenRules,
     getAppointmentsRules, confirmAppointmentRules, verifyOTPRules, verifyOTPLenght, updatePatientRules, validateHospitalData,
-    validateHospitalDataUpdate, validateAdmitPatientRules
+    validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv
 };

@@ -20,7 +20,7 @@ module.exports = {
       },
       is_deleted: {
         type: Sequelize.BOOLEAN,
-        default: false
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,

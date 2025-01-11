@@ -1,41 +1,30 @@
 'use strict';
+
+const { toDefaultValue } = require('sequelize/lib/utils');
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Patients', {
+    await queryInterface.createTable('LoginFaileds', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      userId: {
+        type: Sequelize.INTEGER
+      },
+      role: {
         type: Sequelize.STRING
       },
-      last_name: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      password: {
-        type: Sequelize.STRING
-      },
-      phone: {
-        type: Sequelize.STRING
-      },
-      date_of_birth: {
-        type: Sequelize.DATE
-      },
-      gender: {
-        type: Sequelize.STRING
+      loginFailedCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       is_deleted: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
-      },
-      address: {
-        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,
@@ -48,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Patients');
+    await queryInterface.dropTable('LoginFaileds');
   }
 };

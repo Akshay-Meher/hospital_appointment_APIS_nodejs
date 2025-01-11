@@ -2,40 +2,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Patients', {
+    await queryInterface.createTable('OtpTokens', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      userId: {
+        type: Sequelize.INTEGER
+      },
+      role: {
         type: Sequelize.STRING
       },
-      last_name: {
+      otp: {
+        type: Sequelize.INTEGER
+      },
+      token: {
         type: Sequelize.STRING
       },
-      email: {
-        type: Sequelize.STRING
-      },
-      password: {
-        type: Sequelize.STRING
-      },
-      phone: {
-        type: Sequelize.STRING
-      },
-      date_of_birth: {
+      otpExpiration: {
         type: Sequelize.DATE
       },
-      gender: {
-        type: Sequelize.STRING
+      is_email_verified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       is_deleted: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
-      },
-      address: {
-        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,
@@ -48,6 +43,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Patients');
+    await queryInterface.dropTable('OtpTokens');
   }
 };

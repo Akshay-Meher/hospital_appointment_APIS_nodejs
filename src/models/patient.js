@@ -7,6 +7,8 @@ module.exports = (sequelize) => {
       // Define associations here
       // Example: Patient.hasMany(models.Appointment, { foreignKey: 'patient_id' });
       Patient.hasMany(models.Appointment, { foreignKey: 'patient_id', as: 'appointments' });
+      Patient.hasOne(models.OtpToken, { foreignKey: 'userId' });
+      Patient.hasOne(models.LoginFailed, { foreignKey: 'userId' });
     }
   }
 
@@ -46,19 +48,19 @@ module.exports = (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      otp: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      otp_expiration: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      is_email_verified: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
+      // otp: {
+      //   type: DataTypes.STRING,
+      //   allowNull: true,
+      // },
+      // otp_expiration: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      // },
+      // is_email_verified: {
+      //   type: DataTypes.BOOLEAN,
+      //   allowNull: false,
+      //   defaultValue: false,
+      // },
       is_deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

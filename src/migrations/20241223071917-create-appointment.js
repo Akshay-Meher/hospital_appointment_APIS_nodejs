@@ -20,14 +20,14 @@ module.exports = {
       },
       status: {
         type: Sequelize.STRING,
-        default: 'pending'
+        defaultValue: 'pending'
       },
       notes: {
         type: Sequelize.TEXT
       },
       is_deleted: {
         type: Sequelize.BOOLEAN,
-        default: false
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,

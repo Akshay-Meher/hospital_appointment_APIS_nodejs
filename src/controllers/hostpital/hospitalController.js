@@ -10,7 +10,7 @@ const logger = require('../../utils/logger');
 
 exports.createHospital = async (req, res) => {
     const { hospital_name, address, contact_number, specializations, capacity, available_beds } = req.body;
-    console.log("createHospital", req.body);
+
 
     try {
         const modelWithMethod = {

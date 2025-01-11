@@ -148,8 +148,6 @@ const appointment_dateValidatoin = body('appointment_date')
         const date_of_app = new Date(value);
         date_of_app.setHours(0, 0, 0, 0);
 
-        // console.log("today", today);
-        // console.log("date_of_app", date_of_app);
 
         if (date_of_app < today) {
             throw new Error(mustPresentOrFuture('appointment_date'));

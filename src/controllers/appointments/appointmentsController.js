@@ -111,8 +111,6 @@ const getAppointments = async (req, res) => {
             : { model: Patient, as: 'patientDetails', attributes: { exclude: ['password'] } };
 
 
-        // console.log("modelname", modelName, role, id);
-
         const appointments = await executeModelMethod({
             modelName,
             methodName: 'findOne',
@@ -134,7 +132,7 @@ const getAppointments = async (req, res) => {
         logger.info(`Appointments fetched for ${role} with ID: ${id}`);
         return sendResponse(res, "OK", null, appointments);
     } catch (error) {
-        console.log(error);
+        console.error('Error:', err);
         logger.error('Failed to fetch appointments', { error });
         return sendResponse(res, "INTERNAL_SERVER_ERROR");
     }

@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      hostpital_name: {
+      hospital_name: {
         type: Sequelize.STRING
       },
       address: {
@@ -29,7 +29,7 @@ module.exports = {
       },
       is_deleted: {
         type: Sequelize.BOOLEAN,
-        default: false
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,

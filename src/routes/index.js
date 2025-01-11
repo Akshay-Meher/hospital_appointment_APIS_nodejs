@@ -8,12 +8,16 @@ const emailVerificationRoutes = require('./emailVerificationRoutes');
 const firebaseRoutes = require('./firebaseRoutes');
 const hospitalRoutes = require('./hospitalRoutes');
 const admitRoutes = require('./admitRoutes');
+const paymentRoutes = require('./paymentRoutes');
 
 const { swaggerUi, specs } = require('../swagger/swagger');
+const { isDevEnv } = require('../validations/authValidation');
 
 const router = express.Router();
 
-router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+if (isDevEnv) {
+    router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+}
 
 router.use('/patient', patientRoutes);
 router.use('/doctor', doctorRoutes);
@@ -23,6 +27,7 @@ router.use('/email', emailVerificationRoutes);
 router.use('/firebase', firebaseRoutes);
 router.use('/hospital', hospitalRoutes);
 router.use('/admit', admitRoutes);
+router.use('/payment', paymentRoutes);
 
 
 module.exports = router;

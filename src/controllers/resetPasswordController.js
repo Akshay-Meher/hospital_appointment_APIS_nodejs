@@ -45,6 +45,14 @@ const resetPassword = async (req, res) => {
         });
 
         logger.info(`Password updated successfully for ${role} with email: ${email}`);
+
+        await executeModelMethod({
+            modelName: "LoginFailed",
+            methodName: "destroy",
+            args: { where: { userId: user.id, role, is_deleted: false } }
+
+        });
+
         return sendResponse(res, "OK", true, updatedSuccessfully('Password'));
     } catch (error) {
         logger.error('Failed to update password', { error });
