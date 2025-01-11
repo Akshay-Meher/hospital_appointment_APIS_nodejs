@@ -9,6 +9,7 @@ const firebaseRoutes = require('./firebaseRoutes');
 const hospitalRoutes = require('./hospitalRoutes');
 const admitRoutes = require('./admitRoutes');
 const paymentRoutes = require('./paymentRoutes');
+const otpLoginRoutes = require('./otpLoginRoutes');
 
 const { swaggerUi, specs } = require('../swagger/swagger');
 const { isDevEnv } = require('../validations/authValidation');
@@ -28,6 +29,7 @@ router.use('/firebase', firebaseRoutes);
 router.use('/hospital', hospitalRoutes);
 router.use('/admit', admitRoutes);
 router.use('/payment', paymentRoutes);
+router.use('/otp-login', otpLoginRoutes);
 
 
 module.exports = router;

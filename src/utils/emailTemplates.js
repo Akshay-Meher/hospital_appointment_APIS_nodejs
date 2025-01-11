@@ -98,7 +98,20 @@ const otpEmailTemplate = (otp) => `
 </html>
 `;
 
-module.exports = { appointmentTemplate, otpEmailTemplate };
+const otpLoginEmailTemplate = (otp) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login with OTP</title>
+</head>
+<body>
+  <p>Your OTP for Login is: <strong>${otp}</strong></p>
+  <p>This OTP is valid for 10 minutes.</p>
+</body>
+</html>
+`;
+
+module.exports = { appointmentTemplate, otpEmailTemplate, otpLoginEmailTemplate };
 
 
 

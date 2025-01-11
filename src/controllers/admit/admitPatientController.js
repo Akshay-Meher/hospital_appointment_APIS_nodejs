@@ -49,7 +49,7 @@ const admitPatient = async (req, res) => {
         return sendResponse(res, CREATED, 'Patient admitted successfully', admitRecord);
     } catch (err) {
         logger.error(`admitPatient : ${err.message}`);
-        return sendResponse(res, INTERNAL_SERVER_ERROR, 'Internal Server Error');
+        return sendResponse(res, INTERNAL_SERVER_ERROR);
     }
 };
 

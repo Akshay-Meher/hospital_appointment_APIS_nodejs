@@ -1,5 +1,5 @@
 const { sendEmail } = require('../services/email/emailSender');
-const { appointmentTemplate, otpEmailTemplate } = require('./emailTemplates');
+const { appointmentTemplate, otpEmailTemplate, otpLoginEmailTemplate } = require('./emailTemplates');
 const logger = require('./logger'); // Assuming you have a logger utility
 const { sendResponse } = require('../services/responseHandler');
 
@@ -59,7 +59,15 @@ const sendOTPEmail = async (recipient, otp) => {
     await sendEmail(recipient, subject, text, html);
 };
 
-module.exports = { sendAppointmentEmail, sendOTPEmail };
+const sendLoginOTPEmail = async (recipient, otp) => {
+    const subject = 'Login OTP';
+    const text = `Your OTP is: ${otp}`;
+    const html = otpLoginEmailTemplate(otp);
+
+    await sendEmail(recipient, subject, text, html);
+};
+
+module.exports = { sendAppointmentEmail, sendOTPEmail, sendLoginOTPEmail };
 
 
 

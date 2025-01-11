@@ -132,7 +132,17 @@ const resetRules = [
 // email varification 
 
 const verifyOTPRules = [body('email').isEmail().withMessage(fieldRequired('email'))];
+const verifyLoginOTPRules = [body('email').isEmail().withMessage(fieldRequired('email')), roleRules];
 
+const verifyLoginOTPLenght = [
+    body('email')
+        .isEmail().withMessage(fieldRequired('email')),
+    body('otp')
+        .trim()
+        .notEmpty().withMessage(fieldRequired('otp'))
+        .isLength({ min: 6, max: 6 }).withMessage(OTP('OTP')),
+    roleRules
+];
 const verifyOTPLenght = [
     body('email')
         .isEmail().withMessage(fieldRequired('email')),
@@ -289,5 +299,5 @@ const validateCreateOrder = [
 module.exports = {
     resetRules, loginPatientRules, validatePatient, validateDoctor, appointmentRules, saveTokenRules, getTokenRules,
     getAppointmentsRules, confirmAppointmentRules, verifyOTPRules, verifyOTPLenght, updatePatientRules, validateHospitalData,
-    validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv
+    validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv, verifyLoginOTPLenght, verifyLoginOTPRules
 };
