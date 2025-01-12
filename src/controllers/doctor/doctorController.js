@@ -26,8 +26,9 @@ exports.registerDoctor = async (req, res) => {
         };
 
         const doctor = await executeModelMethod(modelWithMethod1);
+        const { password: _password, ...doctorData } = doctor.toJSON();
 
-        return sendResponse(res, "CREATED", registeredSuccessfullyMessage("Doctor"), doctor);
+        return sendResponse(res, "CREATED", registeredSuccessfullyMessage("Doctor"), doctorData);
 
     } catch (err) {
         console.error("registerDoctor Error:", err);

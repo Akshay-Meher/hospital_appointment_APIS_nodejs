@@ -27,6 +27,30 @@ const checkPatientExist = async (req, res, next) => {
     }
 }
 
+const checkAdminExist = async (req, res, next) => {
+    try {
+
+        const { email } = req.body;
+
+        const modelWithMethod = {
+            modelName: "Admin",
+            methodName: "findOne",
+            args: { where: { email, is_deleted: false } }
+        };
+        const patientExists = await executeModelMethod(modelWithMethod);
+
+        if (patientExists) {
+            return sendResponse(res, 'CONFLICT', emialExistsMessage('Admin'));
+        }
+
+        next();
+
+    } catch (error) {
+        console.log("checkPatientExist err", error);
+        return sendResponse(res, "INTERNAL_SERVER_ERROR", err.message);
+    }
+}
+
 const checkDoctorExist = async (req, res, next) => {
     try {
 
@@ -64,4 +88,4 @@ const checkDoctorExist = async (req, res, next) => {
     }
 }
 
-module.exports = { checkPatientExist, checkDoctorExist };
+module.exports = { checkPatientExist, checkDoctorExist, checkAdminExist };

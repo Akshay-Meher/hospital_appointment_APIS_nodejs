@@ -10,6 +10,7 @@ const hospitalRoutes = require('./hospitalRoutes');
 const admitRoutes = require('./admitRoutes');
 const paymentRoutes = require('./paymentRoutes');
 const otpLoginRoutes = require('./otpLoginRoutes');
+const adminRoutes = require('./adminRoutes');
 
 const { swaggerUi, specs } = require('../swagger/swagger');
 const { isDevEnv } = require('../validations/authValidation');
@@ -20,6 +21,7 @@ if (isDevEnv) {
     router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 }
 
+router.use('/admin', adminRoutes);
 router.use('/patient', patientRoutes);
 router.use('/doctor', doctorRoutes);
 router.use('/appointment', appointmentRoutes);

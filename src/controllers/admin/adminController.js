@@ -14,23 +14,23 @@ const { where } = require('sequelize');
 
 dotenv.config();
 
-exports.registerPatient = async (req, res) => {
-    let { name, last_name, email, password, phone, gender, date_of_birth, address } = req.body;
+exports.registerAdmin = async (req, res) => {
+    let { name, last_name, email, password, hospital_id } = req.body;
 
     try {
 
         password = await hashPassword(password);
 
         const modelWithMethod1 = {
-            modelName: "Patient",
+            modelName: "Admin",
             methodName: "create",
-            args: { name, last_name, email, password, phone, gender, date_of_birth, address }
+            args: { name, last_name, email, password, hospital_id }
         };
 
-        const patient = await executeModelMethod(modelWithMethod1);
-        const { password: _password, ...patientData } = patient.toJSON();
+        const admin = await executeModelMethod(modelWithMethod1);
+        const { password: _password, ...adminData } = admin.toJSON();
 
-        return sendResponse(res, "CREATED", registeredSuccessfullyMessage('Patient'), patientData);
+        return sendResponse(res, "CREATED", registeredSuccessfullyMessage('Admin'), adminData);
 
     } catch (err) {
         console.error("registerPatient Error:", err);
@@ -41,23 +41,23 @@ exports.registerPatient = async (req, res) => {
 
 
 
-exports.loginPatient = async (req, res) => {
+exports.loginAdmin = async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const modelWithMethod = {
-            modelName: "Patient",
+            modelName: "Admin",
             methodName: "findOne",
             args: { where: { email, is_deleted: false } }
         };
-        const patient = await executeModelMethod(modelWithMethod);
+        const admin = await executeModelMethod(modelWithMethod);
 
-        if (!patient) {
-            return sendResponse(res, 'NOT_FOUND', notFoundEmail('patient'));
+        if (!admin) {
+            return sendResponse(res, 'NOT_FOUND', notFoundEmail('admin'));
         }
 
-        const userId = patient.id;
-        const role = 'patient';
+        const userId = admin.id;
+        const role = 'admin';
 
         // Check if the record exists for the userId and role
         const existingRecord = await executeModelMethod({
@@ -70,7 +70,7 @@ exports.loginPatient = async (req, res) => {
             return sendResponse(res, "TOO_MANY_REQUESTS", tooManyfailedAttempts());
         }
 
-        const isPasswordValid = await comparePassword(password, patient.password);
+        const isPasswordValid = await comparePassword(password, admin.password);
 
         if (!isPasswordValid) {
 
@@ -95,7 +95,7 @@ exports.loginPatient = async (req, res) => {
             return sendResponse(res, 'UNAUTHORIZED', invalidCredential());
         }
 
-        const token = generateToken({ id: patient.id, email: patient.email, name: patient?.name, role: 'patient' });
+        const token = generateToken({ id: admin.id, email: admin.email, name: admin?.name, role: 'admin' });
 
         return sendResponse(res, "OK", loginSuccessful(), { token });
 
@@ -108,26 +108,26 @@ exports.loginPatient = async (req, res) => {
 
 
 
-exports.updatePatient = async (req, res) => {
+exports.updateAdmin = async (req, res) => {
     const { id } = req.body;
     const updateData = req.body;
 
     try {
-        const patient = await executeModelMethod({
-            modelName: "Patient",
+        const Admin = await executeModelMethod({
+            modelName: "Admin",
             methodName: "findOne",
             args: {
                 where: { id, is_deleted: false }
             }
         });
 
-        if (!patient) {
-            return sendResponse(res, "NOT_FOUND", notFound("Patient"));
+        if (!Admin) {
+            return sendResponse(res, "NOT_FOUND", notFound("Admin"));
         }
 
 
         await executeModelMethod({
-            modelName: "Patient",
+            modelName: "Admin",
             methodName: "update",
             args: [
                 updateData,
@@ -137,8 +137,8 @@ exports.updatePatient = async (req, res) => {
             ]
         });
 
-        const updatedPatient = await executeModelMethod({
-            modelName: "Patient",
+        const updatedAdmin = await executeModelMethod({
+            modelName: "Admin",
             methodName: "findOne",
             args: {
                 where: { id, is_deleted: false }
@@ -146,10 +146,10 @@ exports.updatePatient = async (req, res) => {
         });
 
 
-        return sendResponse(res, "OK", updatedSuccessfully("Patient"), updatedPatient);
+        return sendResponse(res, "OK", updatedSuccessfully("Admin"), updatedAdmin);
 
     } catch (error) {
-        logger.error(`Failed to update patient: ${error.message}`);
+        logger.error(`Failed to update Admin: ${error.message}`);
         return sendResponse(res, "INTERNAL_SERVER_ERROR");
     }
 };

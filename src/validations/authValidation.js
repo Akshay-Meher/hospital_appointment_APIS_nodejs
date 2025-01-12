@@ -34,8 +34,28 @@ const updatePatientRules = [optionalNameValidation, optionalLastNameValidation, 
 ]
 
 
-
 const loginPatientRules = [emailValidation, passwordValidation];
+
+const validateAdmin = [
+    body('hospital_id')
+        .trim()
+        .notEmpty()
+        .withMessage(fieldRequired('hospital_id')),
+    nameValidation, lastNameValidation, emailValidation, passwordValidation];
+
+const updateAdminRules = [optionalNameValidation, optionalLastNameValidation, optionalEmailValidation,
+    body('id')
+        .trim()
+        .notEmpty()
+        .withMessage(fieldRequired('id')),
+
+    body('password')
+        .optional()
+        .trim()
+        .custom((vaue) => {
+            throw new Error("password can't update please reset password");
+        })
+];
 
 
 const validateDoctor = [
@@ -59,8 +79,6 @@ const validateDoctor = [
     // .isInt({ min: 0 }).withMessage('Years of experience cannot be negative'),
 
 ];
-
-
 
 // 
 const appointmentRules = [
@@ -299,5 +317,6 @@ const validateCreateOrder = [
 module.exports = {
     resetRules, loginPatientRules, validatePatient, validateDoctor, appointmentRules, saveTokenRules, getTokenRules,
     getAppointmentsRules, confirmAppointmentRules, verifyOTPRules, verifyOTPLenght, updatePatientRules, validateHospitalData,
-    validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv, verifyLoginOTPLenght, verifyLoginOTPRules
+    validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv, verifyLoginOTPLenght, verifyLoginOTPRules,
+    validateAdmin, updateAdminRules
 };
