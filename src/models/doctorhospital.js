@@ -14,12 +14,24 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   DoctorHospital.init({
-    doctor_id: DataTypes.INTEGER,
-    hospital_id: DataTypes.INTEGER,
-    is_deleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
+    doctor_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Doctor',
+        key: 'id',
+      },
     },
+    hospital_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Hospital',
+        key: 'id',
+      },
+      is_deleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+    }
   }, {
     sequelize,
     modelName: 'DoctorHospital',

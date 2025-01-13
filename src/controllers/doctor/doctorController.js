@@ -112,7 +112,7 @@ exports.getAllDoctors = async (req, res) => {
         const modelWithMethod = {
             modelName: "Doctor",
             methodName: "findAll",
-            args: { where: { is_deleted: false } }
+            args: { where: { is_deleted: false }, attributes: { exclude: ['password'] } }
         };
         const allPatient = await executeModelMethod(modelWithMethod);
         return sendResponse(res, 'OK', null, allPatient);

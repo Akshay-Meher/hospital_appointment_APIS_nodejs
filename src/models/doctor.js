@@ -6,7 +6,7 @@ module.exports = (sequelize) => {
     static associate(models) {
       // Define associations here if needed later
       Doctor.hasMany(models.Appointment, { foreignKey: 'doctor_id', as: 'appointments' });
-      Doctor.belongsToMany(models.Hospital, { through: 'DoctorHospitals', foreignKey: 'doctor_id' });
+      Doctor.belongsToMany(models.Hospital, { through: 'DoctorHospital', foreignKey: 'doctor_id' });
       Doctor.hasOne(models.OtpToken, { foreignKey: 'userId' });
       Doctor.hasOne(models.LoginFailed, { foreignKey: 'userId' });
       Doctor.hasOne(models.LoginOtp, { foreignKey: 'userId' });

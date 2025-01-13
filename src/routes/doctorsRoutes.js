@@ -1,7 +1,7 @@
 const express = require('express');
 const { loginPatientRules, validateDoctor } = require('../validations/authValidation');
 const checkValidationMidd = require('../middleware/checkValidationMiddleware');
-const { registerDoctor, loginDoctor, getAllDoctors } = require('../controllers/doctor/doctorController');
+const { registerDoctor, loginDoctor, getAllDoctors, getAllAppointmentsOfDoctor } = require('../controllers/doctor/doctorController');
 const { checkDoctorExist } = require('../middleware/patientExistMiddleware');
 const isLoginMiddleware = require('../middleware/isLoginMiddleware');
 

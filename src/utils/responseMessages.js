@@ -145,6 +145,8 @@ const positiveInteger = (field_name) => `${field_name} must be a positive intege
 const exceedCapacity = (field_name) => `${field_name} cannot exceed hospital capacity`;
 const tooManyfailedAttempts = () => "Too many failed attempts. Please reset your password.";
 const provideAdminToken = () => "Please provide admin token, or login as admin";
+const DoctorAlreadyAssociated = () => 'Doctor is already associated with this hospital.';
+const doctorAddedToHospital = () => 'Doctor added to hospital successfully.';
 
 
 
@@ -155,5 +157,5 @@ module.exports = {
     passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate,
     appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, inccorect, updatedSuccessfully,
     notFound, notAuthorized, confirmedSuccessfully, notAuthorizedLogin, cancelledSuccessfully, OTP, invalidOTP, validPhone,
-    positiveInteger, exceedCapacity, tooManyfailedAttempts, provideAdminToken
+    positiveInteger, exceedCapacity, tooManyfailedAttempts, provideAdminToken, DoctorAlreadyAssociated, doctorAddedToHospital
 };
