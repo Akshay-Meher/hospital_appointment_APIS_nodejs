@@ -147,6 +147,9 @@ const tooManyfailedAttempts = () => "Too many failed attempts. Please reset your
 const provideAdminToken = () => "Please provide admin token, or login as admin";
 const DoctorAlreadyAssociated = () => 'Doctor is already associated with this hospital.';
 const doctorAddedToHospital = () => 'Doctor added to hospital successfully.';
+const pdfImageMessage = (field_name) => `${field_name} must be a PDF, png or JPG file`;
+const uploadedSuccessfully = (field_name) => `${field_name} uploaded successfully`;
+const verifiedSuccessfully = (field_name) => `${field_name} verified successfully`;
 
 
 
@@ -157,5 +160,6 @@ module.exports = {
     passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate,
     appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, inccorect, updatedSuccessfully,
     notFound, notAuthorized, confirmedSuccessfully, notAuthorizedLogin, cancelledSuccessfully, OTP, invalidOTP, validPhone,
-    positiveInteger, exceedCapacity, tooManyfailedAttempts, provideAdminToken, DoctorAlreadyAssociated, doctorAddedToHospital
+    positiveInteger, exceedCapacity, tooManyfailedAttempts, provideAdminToken, DoctorAlreadyAssociated, doctorAddedToHospital,
+    pdfImageMessage, uploadedSuccessfully, verifiedSuccessfully
 };

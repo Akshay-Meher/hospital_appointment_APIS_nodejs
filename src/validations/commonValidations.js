@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP } = require('../utils/responseMessages');
+const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP, pdfImageMessage } = require('../utils/responseMessages');
 
 const nameValidation = body('name')
     .trim()
@@ -249,10 +249,43 @@ const validateHospitalData = [
 ];
 
 
+const uploadDocumentValidator = [
+    body('doctor_id')
+        .notEmpty()
+        .withMessage(fieldRequired('doctor_id')),
+    body('aadhaar_card')
+        .custom((value, { req }) => {
+            // console.log("aadhaar_card req.files", req.files);
+            if (!req.files || !req.files['aadhaar_card']) {
+                throw new Error(fieldRequired('aadhaar_card file'));
+            }
+            const file = req.files['aadhaar_card'][0];
+            const allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+            if (!allowedMimeTypes.includes(file.mimetype)) {
+                throw new Error(pdfImageMessage('aadhaar_card'));
+            }
+            return true;
+        }),
+    body('certificate')
+        .custom((value, { req }) => {
+            if (!req.files || !req.files['certificate']) {
+                // throw new Error('Certificate file is required');
+                throw new Error(fieldRequired('Certificate file'));
+            }
+            const file = req.files['certificate'][0];
+            const allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+            if (!allowedMimeTypes.includes(file.mimetype)) {
+                throw new Error(pdfImageMessage('certificate'));
+            }
+            return true;
+        })
+];
+
+const verifyDocsValidation = [body('doctor_id').notEmpty().withMessage(fieldRequired('doctor_id'))];
 
 
 module.exports = {
     nameValidation, lastNameValidation, emailValidation, passwordValidation, phoneValidation, genderValidation,
     dobValidation, optionalNameValidation, optionalLastNameValidation, optionalEmailValidation, optionalPhoneValidation, optionalGenderValidation, optionalDOBValidation, optionalAddressValidation, appointment_dateValidatoin, appointment_timeValidation, user_idRules, tokenRules,
-    roleRules
+    roleRules, uploadDocumentValidator, verifyDocsValidation
 };

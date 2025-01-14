@@ -15,6 +15,8 @@ jspm_packages/
 # Build directories
 /dist/
 /build/
+/public/temp
+/public/upload
 
 # OS-specific files
 .DS_Store

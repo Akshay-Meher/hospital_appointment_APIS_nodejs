@@ -1,0 +1,124 @@
+const fs = require('fs');
+const path = require('path');
+const { DoctorDocument } = require('../models');
+const { executeModelMethod } = require('../services/executeModelMethod');
+const { sendResponse } = require('../services/responseHandler');
+const { where } = require('sequelize');
+const { uploadedSuccessfully, verifiedSuccessfully } = require('../utils/responseMessages');
+
+// Helper function to ensure a directory exists, create it if it doesn't
+const ensureDirectoryExists = async (dirPath) => {
+    try {
+        await fs.promises.mkdir(dirPath, { recursive: true });
+    } catch (err) {
+        throw new Error(`Failed to create directory: ${dirPath}`);
+    }
+};
+
+// Helper function to copy files
+const copyFile = async (source, destination) => {
+    try {
+        await new Promise((resolve, reject) => {
+            fs.copyFile(source, destination, (err) => {
+                if (err) reject(err);
+                else resolve();
+            });
+        });
+        console.log('File copied successfully!');
+    } catch (err) {
+        console.error('Error copying file:', err);
+    }
+};
+
+
+exports.uploadDocuments = async (req, res) => {
+
+    try {
+        const { doctor_id } = req.body;
+        const aadhaarCardFile = req.files['aadhaar_card']?.[0];
+        const certificateFile = req.files['certificate']?.[0];
+
+        console.log("doctor_id: ", doctor_id, aadhaarCardFile, certificateFile);
+
+        // Dynamic upload folder
+        const uploadDir = path.join(__dirname, '../../public/upload/doctor_' + doctor_id);
+        await ensureDirectoryExists(uploadDir);
+
+        // Define destination paths
+        const aadhaarCardPath = path.join(uploadDir, aadhaarCardFile.filename);
+        const certificatePath = path.join(uploadDir, certificateFile.filename);
+
+        // copy files from temp to upload directory
+        await copyFile(aadhaarCardFile.path, aadhaarCardPath);
+        await copyFile(certificateFile.path, certificatePath);
+
+        const checkDocumentExists = await executeModelMethod({
+            modelName: "DoctorDocument",
+            methodName: "findOne",
+            args: { where: { doctor_id, is_deleted: false } }
+        })
+
+        if (checkDocumentExists) {
+            const updateDocs = await executeModelMethod({
+                modelName: "DoctorDocument",
+                methodName: "update",
+                args: [
+                    {
+                        aadhaar_card: `/upload/doctor_${doctor_id}/${aadhaarCardFile.filename}`,
+                        certificate: `/upload/doctor_${doctor_id}/${certificateFile.filename}`
+                    },
+                    {
+                        where: { doctor_id, is_deleted: false }
+                    }
+                ]
+            });
+
+            return sendResponse(res, "CREATED", uploadedSuccessfully("Documents"), updateDocs);
+
+        } else {
+            const newDocument = await executeModelMethod({
+                modelName: "DoctorDocument",
+                methodName: "create",
+                args: {
+                    doctor_id,
+                    aadhaar_card: `/upload/doctor_${doctor_id}/${aadhaarCardFile.filename}`,
+                    certificate: `/upload/doctor_${doctor_id}/${certificateFile.filename}`,
+                }
+            });
+            return sendResponse(res, "CREATED", uploadedSuccessfully("Documents"), newDocument);
+        }
+
+    } catch (err) {
+        console.error(`Error uploading documents: ${err.message}`);
+        return sendResponse(res, "INTERNAL_SERVER_ERROR");
+    }
+};
+
+exports.verifyDocs = async (req, res) => {
+    try {
+        const { doctor_id } = req.body;
+        await executeModelMethod({
+            modelName: "DoctorDocument",
+            methodName: "update",
+            args: [
+                {
+                    isAadhaarVerified: true,
+                    isCertificateVerified: true,
+                },
+                {
+                    where: { doctor_id, is_deleted: false }
+                }
+            ]
+        });
+
+        const docs = await executeModelMethod({
+            modelName: "DoctorDocument",
+            methodName: "findOne",
+            args: { where: { doctor_id } }
+        })
+        return sendResponse(res, "OK", verifiedSuccessfully("documents"), docs);
+    } catch (err) {
+        console.error(`Error verifyDocs documents: ${err.message}`);
+        return sendResponse(res, "INTERNAL_SERVER_ERROR");
+    }
+};

@@ -10,6 +10,7 @@ module.exports = (sequelize) => {
       Doctor.hasOne(models.OtpToken, { foreignKey: 'userId' });
       Doctor.hasOne(models.LoginFailed, { foreignKey: 'userId' });
       Doctor.hasOne(models.LoginOtp, { foreignKey: 'userId' });
+      Doctor.hasOne(models.DoctorDocument, { foreignKey: 'doctor_id' });
 
     }
   }

@@ -11,6 +11,7 @@ const admitRoutes = require('./admitRoutes');
 const paymentRoutes = require('./paymentRoutes');
 const otpLoginRoutes = require('./otpLoginRoutes');
 const adminRoutes = require('./adminRoutes');
+const doctorDocumentRoutes = require('./doctorDocumentRoutes');
 
 const { swaggerUi, specs } = require('../swagger/swagger');
 const { isDevEnv } = require('../validations/authValidation');
@@ -32,6 +33,7 @@ router.use('/hospital', hospitalRoutes);
 router.use('/admit', admitRoutes);
 router.use('/payment', paymentRoutes);
 router.use('/otp-login', otpLoginRoutes);
+router.use('/documents', doctorDocumentRoutes);
 
 
 module.exports = router;
