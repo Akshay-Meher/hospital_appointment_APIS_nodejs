@@ -1,34 +1,11 @@
-const fs = require('fs');
+// const fs = require('fs');
 const path = require('path');
 const { DoctorDocument } = require('../models');
 const { executeModelMethod } = require('../services/executeModelMethod');
 const { sendResponse } = require('../services/responseHandler');
 const { where } = require('sequelize');
 const { uploadedSuccessfully, verifiedSuccessfully } = require('../utils/responseMessages');
-
-// Helper function to ensure a directory exists, create it if it doesn't
-const ensureDirectoryExists = async (dirPath) => {
-    try {
-        await fs.promises.mkdir(dirPath, { recursive: true });
-    } catch (err) {
-        throw new Error(`Failed to create directory: ${dirPath}`);
-    }
-};
-
-// Helper function to copy files
-const copyFile = async (source, destination) => {
-    try {
-        await new Promise((resolve, reject) => {
-            fs.copyFile(source, destination, (err) => {
-                if (err) reject(err);
-                else resolve();
-            });
-        });
-        console.log('File copied successfully!');
-    } catch (err) {
-        console.error('Error copying file:', err);
-    }
-};
+const { ensureDirectoryExists, copyFile } = require('../utils/fileOperations');
 
 
 exports.uploadDocuments = async (req, res) => {

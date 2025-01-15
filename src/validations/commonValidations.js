@@ -1,5 +1,5 @@
-const { body } = require('express-validator');
-const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP, pdfImageMessage } = require('../utils/responseMessages');
+const { body, param } = require('express-validator');
+const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP, pdfImageMessage, atleastFiveChar, ratingOneToFive, positiveInteger } = require('../utils/responseMessages');
 
 const nameValidation = body('name')
     .trim()
@@ -283,9 +283,23 @@ const uploadDocumentValidator = [
 
 const verifyDocsValidation = [body('doctor_id').notEmpty().withMessage(fieldRequired('doctor_id'))];
 
+const feedbackValidation = [
+    body('patient_id').notEmpty().withMessage(fieldRequired('patient_id')),
+    body('doctor_id').notEmpty().withMessage(fieldRequired('doctor_id')),
+    body('feedback_text').isLength({ min: 5 }).withMessage(atleastFiveChar('Feedback')),
+    body('rating')
+        .isInt({ min: 1, max: 5 })
+        .withMessage(ratingOneToFive("Rating"))
+];
+
+const patientsFeedbacksValidations = [
+    param('patient_id')
+        .notEmpty().withMessage(fieldRequired('patient_id'))
+        .isInt().withMessage(positiveInteger("patient_id"))
+];
 
 module.exports = {
     nameValidation, lastNameValidation, emailValidation, passwordValidation, phoneValidation, genderValidation,
     dobValidation, optionalNameValidation, optionalLastNameValidation, optionalEmailValidation, optionalPhoneValidation, optionalGenderValidation, optionalDOBValidation, optionalAddressValidation, appointment_dateValidatoin, appointment_timeValidation, user_idRules, tokenRules,
-    roleRules, uploadDocumentValidator, verifyDocsValidation
+    roleRules, uploadDocumentValidator, verifyDocsValidation, feedbackValidation, patientsFeedbacksValidations
 };

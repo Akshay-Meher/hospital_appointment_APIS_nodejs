@@ -150,6 +150,9 @@ const doctorAddedToHospital = () => 'Doctor added to hospital successfully.';
 const pdfImageMessage = (field_name) => `${field_name} must be a PDF, png or JPG file`;
 const uploadedSuccessfully = (field_name) => `${field_name} uploaded successfully`;
 const verifiedSuccessfully = (field_name) => `${field_name} verified successfully`;
+const submittedSuccessfully = (field_name) => `${field_name} submitted successfully`;
+const atleastFiveChar = (field_name) => `${field_name} must be at least 5 characters long`;
+const ratingOneToFive = (field_name) => `${field_name} must be an integer between 1 and 5`;
 
 
 
@@ -161,5 +164,5 @@ module.exports = {
     appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, inccorect, updatedSuccessfully,
     notFound, notAuthorized, confirmedSuccessfully, notAuthorizedLogin, cancelledSuccessfully, OTP, invalidOTP, validPhone,
     positiveInteger, exceedCapacity, tooManyfailedAttempts, provideAdminToken, DoctorAlreadyAssociated, doctorAddedToHospital,
-    pdfImageMessage, uploadedSuccessfully, verifiedSuccessfully
+    pdfImageMessage, uploadedSuccessfully, verifiedSuccessfully, submittedSuccessfully, atleastFiveChar, ratingOneToFive
 };
