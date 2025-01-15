@@ -20,27 +20,35 @@ const executeModelMethod = async ({ modelName, methodName, args = null }) => {
             throw new Error(`Method "${methodName}" not found on model "${modelName}".`);
         }
 
-        // const result = args ? await model[methodName](args) : await model[methodName]();
-        let result = null;
+        // Handle the 'update' method separately to return updated data
+        if (methodName === 'update') {
+            const [valuesToUpdate, options] = args;
 
-        // if (!args) {
-        //     return await model[methodName]();
-        // } else if (Array.isArray(args)) {
-        //     return await model[methodName](...args);
-        // } else {
-        //     return await model[methodName](args)
-        // }
+            // Check if the 'returning' option is supported and set
+            const supportsReturning = sequelize.options.dialect === 'postgres';
+            if (supportsReturning) {
+                options.returning = true;
+                const [affectedRows, updatedInstances] = await model.update(valuesToUpdate, options);
+                return updatedInstances;
+            } else {
+                await model.update(valuesToUpdate, options);
+
+                const updatedInstances = await model.findAll({
+                    where: options.where,
+                });
+                return updatedInstances;
+            }
+        }
 
         // Handle both array and object arguments without altering them
         if (Array.isArray(args)) {
-            return await model[methodName](...args); // Spread array for multiple arguments
+            return await model[methodName](...args);
         } else if (args && typeof args === 'object') {
-            return await model[methodName](args); // Pass object directly
+            return await model[methodName](args);
         } else {
-            return await model[methodName](); // No arguments
+            return await model[methodName]();
         }
 
-        // return result;
     } catch (error) {
         console.error(`Error in executeModelMethod: ${error.message}`);
         throw error;
