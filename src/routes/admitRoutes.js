@@ -121,5 +121,4 @@ const router = express.Router();
 
 router.post('/admitPatient', validateAdmitPatientRules, checkValidationMidd, admitPatient);
 
-
 module.exports = router;

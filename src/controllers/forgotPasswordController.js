@@ -64,7 +64,8 @@ const sendForgotPasswordToken = async (req, res) => {
             });
         }
 
-        const link = `http://${req.get('host')}/forgot-password/reset/${user.id}/${role}/${token}`;
+        // const link = `http://${req.get('host')}/forgot-password/reset/${user.id}/${role}/${token}`;
+        const link = `http://${req.get('host')}/forgot-password/reset?uId=${user.id}&role=${role}&token=${token}`;
 
         const to = email;
         const subject = "Password Reset";

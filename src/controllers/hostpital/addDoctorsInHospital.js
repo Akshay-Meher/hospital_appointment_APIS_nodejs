@@ -4,12 +4,20 @@ const { Doctor, Hospital, DoctorHospital } = require('../../models');
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const { sendResponse } = require('../../services/responseHandler');
 const { DoctorAlreadyAssociated, doctorAddedToHospital, notFound } = require('../../utils/responseMessages');
+const { isRecordExists } = require('../../utils/isRecordExists');
 
 // Route to add a doctor to a hospital
 const addDoctorToHosital = async (req, res) => {
     const { hospital_id, doctor_id } = req.body;
 
     try {
+
+        const isExist = await isRecordExists(hospital_id, "Hospital");
+        if (!isExist) return sendResponse(res, "NOT_FOUND", notFound("hospital"));
+
+        const isDoctorExist = await isRecordExists(doctor_id, "Doctor");
+        if (!isDoctorExist) return sendResponse(res, "NOT_FOUND", notFound("Doctor"));
+
         const existingAssociation = await executeModelMethod({
             modelName: "DoctorHospital",
             methodName: "findOne",

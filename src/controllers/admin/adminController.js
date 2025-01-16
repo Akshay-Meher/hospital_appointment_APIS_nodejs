@@ -11,6 +11,7 @@ const { executeModelMethod } = require('../../services/executeModelMethod');
 const { emialExistsMessage, registeredSuccessfullyMessage, notFoundEmail, invalidCredential, loginSuccessful, notFound, updatedSuccessfully, tooManyfailedAttempts } = require('../../utils/responseMessages');
 const logger = require('../../utils/logger');
 const { where } = require('sequelize');
+const { isRecordExists } = require('../../utils/isRecordExists');
 
 dotenv.config();
 
@@ -20,6 +21,9 @@ exports.registerAdmin = async (req, res) => {
     try {
 
         password = await hashPassword(password);
+
+        let isExist = await isRecordExists(hospital_id, "Hospital");
+        if (!isExist) return sendResponse(res, "NOT_FOUND", notFound("hospital"));
 
         const modelWithMethod1 = {
             modelName: "Admin",

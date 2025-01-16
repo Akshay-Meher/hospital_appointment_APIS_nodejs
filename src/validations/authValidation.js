@@ -139,8 +139,8 @@ const resetRules = [
         .trim()
         .notEmpty().withMessage(fieldRequired('role'))
         .custom((value) => {
-            if (value !== 'patient' && value !== 'doctor') {
-                throw new Error(doctorOrPatient('role'));
+            if (value !== 'patient' && value !== 'doctor' && value !== 'admin') {
+                throw new Error(doctorPatientOrAdmin('role'));
             }
             return true;
         })
@@ -290,6 +290,16 @@ const validateHospitalDataUpdate = [
         })
 ];
 
+const addDoctorstoHospital = [
+    body('hospital_id')
+        .notEmpty().withMessage(fieldRequired("hospital_id"))
+        .isInt({ min: 1 })
+        .withMessage(positiveInteger("hospital_id")),
+    body('doctor_id')
+        .notEmpty().withMessage(fieldRequired("doctor_id"))
+        .isInt({ min: 1 })
+        .withMessage(positiveInteger("doctor_id")),
+]
 
 
 const validateAdmitPatientRules = [
@@ -312,6 +322,8 @@ const validateAdmitPatientRules = [
         .isDate({ format: 'YYYY-MM-DD' })
         .withMessage(validDateFormat('admit_date')),
     body('status')
+        .optional()
+        .trim()
         .isLength({ min: 3 })
         .withMessage('Status must be a valid string of at least 3 characters'),
     body('notes')
@@ -347,5 +359,5 @@ module.exports = {
     resetRules, loginPatientRules, validatePatient, validateDoctor, appointmentRules, saveTokenRules, getTokenRules,
     getAppointmentsRules, confirmAppointmentRules, verifyOTPRules, verifyOTPLenght, updatePatientRules, validateHospitalData,
     validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv, verifyLoginOTPLenght, verifyLoginOTPRules,
-    validateAdmin, updateAdminRules, forgotPasswordSendToken, forgotPasswordResetRules
+    validateAdmin, updateAdminRules, forgotPasswordSendToken, forgotPasswordResetRules, addDoctorstoHospital
 };

@@ -7,6 +7,7 @@ const { doestNotExist, allreadyBooked, appBookSuccess, notFound } = require('../
 const { Appointment, Patient, Doctor, Sequelize } = require('../../models');
 const { Op, fn, col } = require('sequelize');
 const { sendAppointmentEmail } = require('../../utils/sendAppointmentEmail');
+const { isRecordExists } = require('../../utils/isRecordExists');
 
 
 
@@ -14,6 +15,12 @@ const bookAppointment = async (req, res) => {
     const { patient_id, doctor_id, appointment_date, appointment_time, status } = req.body;
 
     try {
+
+        const isDoctorExist = await isRecordExists(doctor_id, "Doctor");
+        if (!isDoctorExist) return sendResponse(res, "NOT_FOUND", notFound("Doctor"));
+
+        const isPatientExist = await isRecordExists(patient_id, "Patient");
+        if (!isPatientExist) return sendResponse(res, "NOT_FOUND", notFound("Patient"));
 
         const patient = await executeModelMethod({
             modelName: 'Patient',

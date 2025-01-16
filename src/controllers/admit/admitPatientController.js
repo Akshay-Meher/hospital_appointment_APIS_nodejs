@@ -4,12 +4,23 @@ const { CREATED, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../.
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const logger = require('../../utils/logger');
 const { notFound } = require('../../utils/responseMessages');
+const { isRecordExists } = require('../../utils/isRecordExists');
 
 const admitPatient = async (req, res) => {
 
     const { patient_id, doctor_id, hospital_id, admit_date, status, notes } = req.body;
 
     try {
+
+        const isExist = await isRecordExists(hospital_id, "Hospital");
+        if (!isExist) return sendResponse(res, "NOT_FOUND", notFound("hospital"));
+
+        const isDoctorExist = await isRecordExists(doctor_id, "Doctor");
+        if (!isDoctorExist) return sendResponse(res, "NOT_FOUND", notFound("Doctor"));
+
+        const isPatientExist = await isRecordExists(patient_id, "Patient");
+        if (!isPatientExist) return sendResponse(res, "NOT_FOUND", notFound("Patient"));
+
         // Fetch hospital details
         const modelWithMethod = {
             modelName: 'Hospital',

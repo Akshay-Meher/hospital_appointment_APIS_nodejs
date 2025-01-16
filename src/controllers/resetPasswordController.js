@@ -14,8 +14,18 @@ const resetPassword = async (req, res) => {
 
     try {
 
-        const modelName = role === 'patient' ? 'Patient' : 'Doctor';
-
+        // const modelName = role === 'patient' ? 'Patient' : 'Doctor';
+        let modelName;
+        if (role == 'patient') {
+            modelName = "Patient"
+        } else if (role == 'doctor') {
+            modelName = "Doctor"
+        } else if (role == 'admin') {
+            modelName = "Admin"
+        }
+        if (!modelName) {
+            return sendResponse(res, "NOT_FOUND");
+        }
         const modelWithMethod = {
             modelName: modelName,
             methodName: "findOne",

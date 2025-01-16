@@ -1,5 +1,5 @@
 const express = require('express');
-const { appointmentRules, getAppointmentsRules, confirmAppointmentRules, validateHospitalData, validateHospitalDataUpdate } = require('../validations/authValidation');
+const { appointmentRules, getAppointmentsRules, confirmAppointmentRules, validateHospitalData, validateHospitalDataUpdate, addDoctorstoHospital } = require('../validations/authValidation');
 const checkValidationMidd = require('../middleware/checkValidationMiddleware');
 const isLoginMiddleware = require('../middleware/isLoginMiddleware');
 
@@ -402,7 +402,7 @@ router.patch('/update/:id', validateHospitalDataUpdate, checkValidationMidd, upd
 router.delete('/delete/:id', deleteHospital);
 
 
-router.post('/add-doctors', isAdminLoginMiddleware, addDoctorToHosital);
+router.post('/add-doctors', addDoctorstoHospital, checkValidationMidd, isAdminLoginMiddleware, addDoctorToHosital);
 
 router.get('/getAllDoctors/:id', getAllDoctorsFromHospital);
 

@@ -12,7 +12,17 @@ const sendLoginOTP = async (req, res) => {
     try {
         const { email, role } = req.body;
         // const role = req?.user?.role;
-        let modelName = role === 'patient' ? "Patient" : "Doctor";
+        let modelName;
+        if (role == 'patient') {
+            modelName = "Patient"
+        } else if (role == 'doctor') {
+            modelName = "Doctor"
+        } else if (role == 'admin') {
+            modelName = "Admin"
+        }
+        if (!modelName) {
+            return sendResponse(res, "NOT_FOUND");
+        }
 
         const user = await executeModelMethod({
             modelName,
@@ -72,7 +82,18 @@ const verifyLoginOTP = async (req, res) => {
         const { email, otp, role } = req.body;
 
         // const role = req?.user?.role;
-        const modelName = role === 'patient' ? "Patient" : "Doctor";
+        // const modelName = role === 'patient' ? "Patient" : "Doctor";
+        let modelName;
+        if (role == 'patient') {
+            modelName = "Patient"
+        } else if (role == 'doctor') {
+            modelName = "Doctor"
+        } else if (role == 'admin') {
+            modelName = "Admin"
+        }
+        if (!modelName) {
+            return sendResponse(res, "NOT_FOUND");
+        }
 
         const user = await executeModelMethod({
             modelName,

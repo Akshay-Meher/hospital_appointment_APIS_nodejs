@@ -2,7 +2,8 @@ const { validationResult } = require('express-validator');
 const { DoctorFeedback, Doctor, Patient } = require('../../models');
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const { sendResponse } = require('../../services/responseHandler');
-const { submittedSuccessfully, fieldRequired } = require('../../utils/responseMessages');
+const { submittedSuccessfully, fieldRequired, notFound } = require('../../utils/responseMessages');
+const { isRecordExists } = require('../../utils/isRecordExists');
 
 
 
@@ -12,6 +13,13 @@ exports.giveFeedback = async (req, res) => {
     const { patient_id, doctor_id, feedback_text, rating } = req.body;
 
     try {
+
+        const isDoctorExist = await isRecordExists(doctor_id, "Doctor");
+        if (!isDoctorExist) return sendResponse(res, "NOT_FOUND", notFound("Doctor"));
+
+        const isPatientExist = await isRecordExists(patient_id, "Patient");
+        if (!isPatientExist) return sendResponse(res, "NOT_FOUND", notFound("Patient"));
+
         const feedback = await executeModelMethod({
             modelName: "DoctorFeedback",
             methodName: "create",

@@ -4,8 +4,9 @@ const { DoctorDocument } = require('../models');
 const { executeModelMethod } = require('../services/executeModelMethod');
 const { sendResponse } = require('../services/responseHandler');
 const { where } = require('sequelize');
-const { uploadedSuccessfully, verifiedSuccessfully } = require('../utils/responseMessages');
+const { uploadedSuccessfully, verifiedSuccessfully, notFound } = require('../utils/responseMessages');
 const { ensureDirectoryExists, copyFile } = require('../utils/fileOperations');
+const { isRecordExists } = require('../utils/isRecordExists');
 
 
 exports.uploadDocuments = async (req, res) => {
@@ -15,7 +16,10 @@ exports.uploadDocuments = async (req, res) => {
         const aadhaarCardFile = req.files['aadhaar_card']?.[0];
         const certificateFile = req.files['certificate']?.[0];
 
-        console.log("doctor_id: ", doctor_id, aadhaarCardFile, certificateFile);
+        // console.log("doctor_id: ", doctor_id, aadhaarCardFile, certificateFile);
+        const isDoctorExist = await isRecordExists(doctor_id, "Doctor");
+        if (!isDoctorExist) return sendResponse(res, "NOT_FOUND", notFound("Doctor"));
+
 
         // Dynamic upload folder
         const uploadDir = path.join(__dirname, '../../public/upload/doctor_' + doctor_id);

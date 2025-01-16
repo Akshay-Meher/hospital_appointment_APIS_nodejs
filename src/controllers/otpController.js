@@ -11,7 +11,18 @@ const sendOTP = async (req, res) => {
     try {
         const { email } = req.body;
         const role = req?.user?.role;
-        const modelName = role === 'patient' ? "Patient" : "Doctor";
+        // const modelName = role === 'patient' ? "Patient" : "Doctor";
+        let modelName;
+
+        if (role == 'patient') {
+            modelName = "Patient"
+        } else if (role == 'doctor') {
+            modelName = "Doctor"
+        } else if (role == 'admin') {
+            modelName = "Admin"
+        }
+
+        if (!modelName) return sendResponse(res, "BAD_REQUEST");
 
         const user = await executeModelMethod({
             modelName,
@@ -70,7 +81,17 @@ const verifyOTP = async (req, res) => {
         const { email, otp } = req.body;
 
         const role = req?.user?.role;
-        const modelName = role === 'patient' ? "Patient" : "Doctor";
+        // const modelName = role === 'patient' ? "Patient" : "Doctor";
+        let modelName;
+        if (role == 'patient') {
+            modelName = "Patient"
+        } else if (role == 'doctor') {
+            modelName = "Doctor"
+        } else if (role == 'admin') {
+            modelName = "Admin"
+        }
+
+        if (!modelName) return sendResponse(res, "BAD_REQUEST");
 
         const user = await executeModelMethod({
             modelName,

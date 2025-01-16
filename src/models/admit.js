@@ -23,7 +23,10 @@ module.exports = (sequelize, DataTypes) => {
     hospital_id: DataTypes.INTEGER,
     admit_date: DataTypes.DATE,
     discharge_date: DataTypes.DATE,
-    status: DataTypes.STRING,
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: "admited"
+    },
     notes: DataTypes.TEXT,
     is_deleted: {
       type: DataTypes.BOOLEAN,
