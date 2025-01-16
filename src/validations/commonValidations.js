@@ -298,8 +298,14 @@ const patientsFeedbacksValidations = [
         .isInt().withMessage(positiveInteger("patient_id"))
 ];
 
+const doctorsFeedbacksValidations = [
+    param('doctor_id')
+        .notEmpty().withMessage(fieldRequired('doctor_id'))
+        .isInt().withMessage(positiveInteger("doctor_id"))
+];
+
 module.exports = {
     nameValidation, lastNameValidation, emailValidation, passwordValidation, phoneValidation, genderValidation,
     dobValidation, optionalNameValidation, optionalLastNameValidation, optionalEmailValidation, optionalPhoneValidation, optionalGenderValidation, optionalDOBValidation, optionalAddressValidation, appointment_dateValidatoin, appointment_timeValidation, user_idRules, tokenRules,
-    roleRules, uploadDocumentValidator, verifyDocsValidation, feedbackValidation, patientsFeedbacksValidations
+    roleRules, uploadDocumentValidator, verifyDocsValidation, feedbackValidation, patientsFeedbacksValidations, doctorsFeedbacksValidations
 };

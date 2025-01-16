@@ -129,6 +129,7 @@ const cannotExeed255char = (field_name) => `${field_name} cannot exceed 255 char
 const years_of_experience = (field_name) => `${field_name} must be a non-negative integer or a valid integer`;
 const statusFormat = () => `Status must be Pending, Confirmed, or Cancelled`;
 const doctorOrPatient = (field_name) => `${field_name} must be either 'patient' or 'doctor'`;
+const doctorPatientOrAdmin = (field_name) => `${field_name} must be either 'patient','doctor' or 'admin`;
 const inccorect = (field_name) => `${field_name} is incorrect.`;
 const updatedSuccessfully = (field_name) => `${field_name} updated successfully.`;
 
@@ -153,6 +154,9 @@ const verifiedSuccessfully = (field_name) => `${field_name} verified successfull
 const submittedSuccessfully = (field_name) => `${field_name} submitted successfully`;
 const atleastFiveChar = (field_name) => `${field_name} must be at least 5 characters long`;
 const ratingOneToFive = (field_name) => `${field_name} must be an integer between 1 and 5`;
+const resetSuccessfully = (field_name) => `${field_name} reset successfully`;
+const emailSentSuccessfully = (field_name) => `${field_name} email sent successfully`;
+const InvalidOrExpired = (field_name) => `Invalid or expired ${field_name}`;
 
 
 
@@ -164,5 +168,5 @@ module.exports = {
     appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, inccorect, updatedSuccessfully,
     notFound, notAuthorized, confirmedSuccessfully, notAuthorizedLogin, cancelledSuccessfully, OTP, invalidOTP, validPhone,
     positiveInteger, exceedCapacity, tooManyfailedAttempts, provideAdminToken, DoctorAlreadyAssociated, doctorAddedToHospital,
-    pdfImageMessage, uploadedSuccessfully, verifiedSuccessfully, submittedSuccessfully, atleastFiveChar, ratingOneToFive
+    pdfImageMessage, uploadedSuccessfully, verifiedSuccessfully, submittedSuccessfully, atleastFiveChar, ratingOneToFive, doctorPatientOrAdmin, resetSuccessfully, emailSentSuccessfully, InvalidOrExpired
 };

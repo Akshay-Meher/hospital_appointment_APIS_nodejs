@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 const { giveFeedback, getFeedbacksByPatient, getFeedbacksByDoctor } = require('../controllers/feedback/doctorFeedbackController');
-const { feedbackValidation, patientsFeedbacks, patientsFeedbacksValidations } = require('../validations/commonValidations');
+const { feedbackValidation, patientsFeedbacks, patientsFeedbacksValidations, doctorsFeedbacksValidations } = require('../validations/commonValidations');
 const checkValidationMidd = require('../middleware/checkValidationMiddleware');
 // const doctorFeedbackController = require('../controllers/doctorFeedbackController');
 
@@ -14,6 +14,6 @@ router.post('/give-feedback', feedbackValidation, checkValidationMidd, giveFeedb
 router.get('/patient/:patient_id', patientsFeedbacksValidations, checkValidationMidd, getFeedbacksByPatient);
 
 // 3. Route to fetch all feedbacks for a doctor (with patient info)
-router.get('/doctor/:doctor_id', [param('doctor_id').isInt().withMessage('Doctor ID must be an integer')], getFeedbacksByDoctor);
+router.get('/doctor/:doctor_id', doctorsFeedbacksValidations, getFeedbacksByDoctor);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP, validPhone, positiveInteger, exceedCapacity } = require('../utils/responseMessages');
+const { fieldRequired, exceedChar, invalidFormate, passwordFormate, onlyDigits, between10_to15, validGender, validDateFormat, cannotInFuture, mustPresentOrFuture, timeFormate, appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, OTP, validPhone, positiveInteger, exceedCapacity, doctorPatientOrAdmin } = require('../utils/responseMessages');
 const { nameValidation, lastNameValidation, emailValidation, passwordValidation, phoneValidation, genderValidation, dobValidation, optionalNameValidation, optionalLastNameValidation, optionalEmailValidation, optionalPhoneValidation, optionalGenderValidation, optionalDOBValidation, optionalAddressValidation, appointment_dateValidatoin, appointment_timeValidation, user_idRules, roleRules, tokenRules } = require('./commonValidations');
 
 
@@ -141,6 +141,35 @@ const resetRules = [
         .custom((value) => {
             if (value !== 'patient' && value !== 'doctor') {
                 throw new Error(doctorOrPatient('role'));
+            }
+            return true;
+        })
+]
+
+
+const forgotPasswordSendToken = [emailValidation,
+    body('role')
+        .trim()
+        .notEmpty().withMessage(fieldRequired('role'))
+        .custom((value) => {
+            if (value !== 'patient' && value !== 'doctor' && value !== 'admin') {
+                throw new Error(doctorPatientOrAdmin('role'));
+            }
+            return true;
+        })
+];
+
+const forgotPasswordResetRules = [
+    body('password')
+        .trim()
+        .notEmpty().withMessage(fieldRequired('password'))
+        .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/)
+        .withMessage(passwordFormate("password")),
+    body('confirm_password')
+        .trim().notEmpty().withMessage(fieldRequired('confirm_password'))
+        .custom((value, { req }) => {
+            if (value !== req.body.password.trim()) {
+                throw new Error("Password and confirm_password do not match.");
             }
             return true;
         })
@@ -318,5 +347,5 @@ module.exports = {
     resetRules, loginPatientRules, validatePatient, validateDoctor, appointmentRules, saveTokenRules, getTokenRules,
     getAppointmentsRules, confirmAppointmentRules, verifyOTPRules, verifyOTPLenght, updatePatientRules, validateHospitalData,
     validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv, verifyLoginOTPLenght, verifyLoginOTPRules,
-    validateAdmin, updateAdminRules
+    validateAdmin, updateAdminRules, forgotPasswordSendToken, forgotPasswordResetRules
 };

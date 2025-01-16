@@ -11,6 +11,7 @@ module.exports = (sequelize) => {
       Doctor.hasOne(models.LoginFailed, { foreignKey: 'userId' });
       Doctor.hasOne(models.LoginOtp, { foreignKey: 'userId' });
       Doctor.hasOne(models.DoctorDocument, { foreignKey: 'doctor_id' });
+      Doctor.hasOne(models.ForgotPasswordToken, { foreignKey: "userId" });
       Doctor.hasMany(models.DoctorFeedback, { foreignKey: 'doctor_id' });
     }
   }

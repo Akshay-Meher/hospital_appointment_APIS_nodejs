@@ -13,6 +13,8 @@ const otpLoginRoutes = require('./otpLoginRoutes');
 const adminRoutes = require('./adminRoutes');
 const doctorDocumentRoutes = require('./doctorDocumentRoutes');
 const feedbackRoutes = require("./feedbackRoutes");
+const forgotPasswordRoutes = require("./forgotPasswordRoutes");
+const logoutRoutes = require('./logoutRoutes');
 
 const { swaggerUi, specs } = require('../swagger/swagger');
 const { isDevEnv } = require('../validations/authValidation');
@@ -28,6 +30,7 @@ router.use('/patient', patientRoutes);
 router.use('/doctor', doctorRoutes);
 router.use('/appointment', appointmentRoutes);
 router.use('/reset-password', resetPasswordRoutes);
+router.use('/forgot-password', forgotPasswordRoutes);
 router.use('/email', emailVerificationRoutes);
 router.use('/firebase', firebaseRoutes);
 router.use('/hospital', hospitalRoutes);
@@ -36,6 +39,7 @@ router.use('/payment', paymentRoutes);
 router.use('/otp-login', otpLoginRoutes);
 router.use('/documents', doctorDocumentRoutes);
 router.use('/feedback', feedbackRoutes);
+router.use('/logout', logoutRoutes);
 
 
 module.exports = router;
