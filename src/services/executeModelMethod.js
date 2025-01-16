@@ -22,8 +22,9 @@ const executeModelMethod = async ({ modelName, methodName, args = null }) => {
 
         // Handle the 'update' method separately to return updated data
         if (methodName === 'update') {
-            const [valuesToUpdate, options] = args;
-
+            // const [valuesToUpdate, options] = args;
+            const valuesToUpdate = args[0];
+            const options = args[1];
             // Check if the 'returning' option is supported and set
             const supportsReturning = sequelize.options.dialect === 'postgres';
             if (supportsReturning) {
