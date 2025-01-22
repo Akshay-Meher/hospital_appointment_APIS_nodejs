@@ -28,6 +28,7 @@ const isRecordExists = async (id, modelName, options = {}) => {
                 },
             }
         });
+        // console.log("record", record);
         return record !== null; // Return true if record exists, false otherwise
     } catch (error) {
         console.error("Error in isRecordExists:", error);
