@@ -1,18 +1,10 @@
-const { User } = require('../../models');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
-const dotenv = require('dotenv');
 const { sendResponse } = require('../../services/responseHandler');
-const { FORBIDDEN, OK } = require('../../services/statusCodes');
 const generateToken = require('../../services/generateToken');
 const { comparePassword, hashPassword } = require('../../services/comparePassword');
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const { emialExistsMessage, registeredSuccessfullyMessage, notFoundEmail, invalidCredential, loginSuccessful, notFound, updatedSuccessfully, tooManyfailedAttempts } = require('../../utils/responseMessages');
 const logger = require('../../utils/logger');
 const { where } = require('sequelize');
-
-dotenv.config();
 
 exports.registerPatient = async (req, res) => {
     let { name, last_name, email, password, phone, gender, date_of_birth, address } = req.body;

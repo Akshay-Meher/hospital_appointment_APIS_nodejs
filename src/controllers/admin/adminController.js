@@ -2,7 +2,6 @@ const { User } = require('../../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-const dotenv = require('dotenv');
 const { sendResponse } = require('../../services/responseHandler');
 const { FORBIDDEN, OK } = require('../../services/statusCodes');
 const generateToken = require('../../services/generateToken');
@@ -13,7 +12,6 @@ const logger = require('../../utils/logger');
 const { where } = require('sequelize');
 const { isRecordExists } = require('../../utils/isRecordExists');
 
-dotenv.config();
 
 exports.registerAdmin = async (req, res) => {
     let { name, last_name, email, password, hospital_id } = req.body;

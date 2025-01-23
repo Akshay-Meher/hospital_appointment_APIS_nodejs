@@ -1,17 +1,10 @@
-const { Doctor } = require('../../models');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
-const dotenv = require('dotenv');
 const { sendResponse } = require('../../services/responseHandler');
-const { FORBIDDEN, OK } = require('../../services/statusCodes');
 const generateToken = require('../../services/generateToken');
 const { comparePassword, hashPassword } = require('../../services/comparePassword');
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const { licenseDuplicate, emialExistsMessage, registeredSuccessfullyMessage, notFoundEmail, invalidCredential, loginSuccessful, tooManyfailedAttempts } = require('../../utils/responseMessages');
 const logger = require('../../utils/logger');
 
-dotenv.config();
 
 exports.registerDoctor = async (req, res) => {
     let { name, last_name, email, password, phone, gender, specialization, license_number, years_of_experience } = req.body;
