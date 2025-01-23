@@ -8,6 +8,7 @@ const isLoginMiddleware = require('../middleware/isLoginMiddleware');
 
 const router = express.Router();
 const multer = require('multer');
+const { passportAdminLoginMiddleware } = require('../middleware/passportLoginMiddleware');
 const upload = multer();
 
 
@@ -190,7 +191,8 @@ router.post('/register', upload.none(), validatePatient, checkValidationMidd, ch
  *                   example: INTERNAL SERVER ERROR
  */
 
-router.post('/login', loginPatientRules, checkValidationMidd, loginPatient);
+// router.post('/login', loginPatientRules, checkValidationMidd, loginPatient);
+router.post('/login', loginPatientRules, checkValidationMidd, passportAdminLoginMiddleware);
 
 
 /**

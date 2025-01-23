@@ -157,6 +157,7 @@ const ratingOneToFive = (field_name) => `${field_name} must be an integer betwee
 const resetSuccessfully = (field_name) => `${field_name} reset successfully`;
 const emailSentSuccessfully = (field_name) => `${field_name} email sent successfully`;
 const InvalidOrExpired = (field_name) => `Invalid or expired ${field_name}`;
+const successful = (field_name) => ` ${field_name} successful`;
 
 
 
@@ -168,5 +169,5 @@ module.exports = {
     appDate, appTimeErr, cannotExeed255char, years_of_experience, statusFormat, doctorOrPatient, inccorect, updatedSuccessfully,
     notFound, notAuthorized, confirmedSuccessfully, notAuthorizedLogin, cancelledSuccessfully, OTP, invalidOTP, validPhone,
     positiveInteger, exceedCapacity, tooManyfailedAttempts, provideAdminToken, DoctorAlreadyAssociated, doctorAddedToHospital,
-    pdfImageMessage, uploadedSuccessfully, verifiedSuccessfully, submittedSuccessfully, atleastFiveChar, ratingOneToFive, doctorPatientOrAdmin, resetSuccessfully, emailSentSuccessfully, InvalidOrExpired
+    pdfImageMessage, uploadedSuccessfully, verifiedSuccessfully, submittedSuccessfully, atleastFiveChar, ratingOneToFive, doctorPatientOrAdmin, resetSuccessfully, emailSentSuccessfully, InvalidOrExpired, successful
 };

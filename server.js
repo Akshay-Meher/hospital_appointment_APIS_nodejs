@@ -4,21 +4,15 @@ const bodyParser = require('body-parser');
 const routes = require('./src/routes');
 const { handleServerError } = require('./src/middleware/errorHandlingMiddleware');
 const { setupLogging } = require('./src/services/setlogs');
-const session = require('express-session');
 const passport = require('./src/config/passportConfig');
+const { sessionMiddleware } = require('./src/config/sessionStore');
 
 const app = express();
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Configure session
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET_KEY,
-        resave: false,
-        saveUninitialized: true,
-    })
-);
+app.use(sessionMiddleware);
 
 // Initialize Passport and session
 app.use(passport.initialize());

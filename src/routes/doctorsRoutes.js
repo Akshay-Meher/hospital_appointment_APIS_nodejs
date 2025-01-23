@@ -4,6 +4,7 @@ const checkValidationMidd = require('../middleware/checkValidationMiddleware');
 const { registerDoctor, loginDoctor, getAllDoctors, getAllAppointmentsOfDoctor } = require('../controllers/doctor/doctorController');
 const { checkDoctorExist } = require('../middleware/patientExistMiddleware');
 const isLoginMiddleware = require('../middleware/isLoginMiddleware');
+const { passportAdminLoginMiddleware } = require('../middleware/passportLoginMiddleware');
 
 
 const router = express.Router();
@@ -262,7 +263,8 @@ router.post('/register', validateDoctor, checkValidationMidd, checkDoctorExist, 
  *                   example: Internal server error
  */
 
-router.post('/login', loginPatientRules, checkValidationMidd, loginDoctor);
+// router.post('/login', loginPatientRules, checkValidationMidd, loginDoctor);
+router.post('/login', loginPatientRules, checkValidationMidd, passportAdminLoginMiddleware);
 
 /**
  * @swagger

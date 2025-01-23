@@ -26,4 +26,20 @@ const passportAdminLoginMiddleware = (req, res, next) => {
     })(req, res, next);
 }
 
-module.exports = { passportAdminLoginMiddleware };
+const checkAdminLogin = (req, res, next) => {
+
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+        return sendResponse(res, "UNAUTHORIZED", "Unauthorized access. Please log in.");
+    }
+
+    console.log("checkAdminLogin", req.user);
+    // Check if the user is an admin
+    if (req.user.modelName && req.user.modelName !== 'Admin') {
+        return sendResponse(res, "FORBIDDEN", 'Access forbidden: Admins only.');
+    }
+
+    next();
+};
+
+module.exports = { passportAdminLoginMiddleware, checkAdminLogin };

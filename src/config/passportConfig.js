@@ -5,6 +5,7 @@ const { Doctor, Patient, Admin } = require('../models'); // Import models
 const { roleRules } = require('../validations/commonValidations');
 const { comparePassword } = require('../services/comparePassword');
 const { executeModelMethod } = require('../services/executeModelMethod');
+const { tooManyfailedAttempts, invalidCredential } = require('../utils/responseMessages');
 
 passport.use(
     'local-login',
@@ -18,7 +19,7 @@ passport.use(
             try {
                 console.log("LocalStrategy 1", email, password);
                 const loginRoute = req.originalUrl; // Get the login route (e.g., /admin/login)
-                let user;
+                let user, role, userId;
 
                 // Dynamically determine the model based on the route
                 if (loginRoute.includes('admin')) {
@@ -27,29 +28,61 @@ passport.use(
                         methodName: "findOne",
                         args: { where: { email, is_deleted: false } }
                     });
-
+                    role = 'admin';
                 } else if (loginRoute.includes('patient')) {
-                    user = await Patient.findOne({ where: { email } });
+                    user = await Patient.findOne({ where: { email, is_deleted: false } });
+                    role = 'patient';
                 } else if (loginRoute.includes('doctor')) {
-                    user = await Doctor.findOne({ where: { email } });
+                    user = await Doctor.findOne({ where: { email, is_deleted: false } });
+                    role = 'doctor';
                 }
 
                 if (!user) {
                     console.log('LocalStrategy 3');
-                    return done(null, false, { message: 'Incorrect email or password.' });
+                    return done(null, false, { code: 404, message: 'user not found' });
                 }
 
-                // const isMatch = await bcrypt.compare(password, user.password);
-                const isMatch = await comparePassword(password, user.password);;
 
-                if (!isMatch) {
-                    console.log("isMatch");
-                    return done(null, false, { message: 'Incorrect email or password.' });
+                userId = user.id;
+                // Check if the record exists for the userId and role
+                const existingRecord = await executeModelMethod({
+                    modelName: "LoginFailed",
+                    methodName: "findOne",
+                    args: { where: { userId, role, is_deleted: false } }
+                });
+
+                if (existingRecord && existingRecord.loginFailedCount >= 5) {
+
+                    return done(null, false, { code: 429, message: tooManyfailedAttempts() });
                 }
 
-                // Include model name to track role dynamically
-                console.log("last");
+                const isPasswordValid = await comparePassword(password, user.password);;
+
+                if (!isPasswordValid) {
+
+                    if (existingRecord) {
+                        //Increment loginFailedCount
+                        const updatedRecord = await executeModelMethod({
+                            modelName: "LoginFailed",
+                            methodName: "update",
+                            args: [
+                                { loginFailedCount: existingRecord.loginFailedCount + 1 },
+                                { where: { userId, role, is_deleted: false } }
+                            ]
+                        });
+                    } else {
+                        // Create a new record for the userId and role
+                        const newRecord = await executeModelMethod({
+                            modelName: "LoginFailed",
+                            methodName: "create",
+                            args: { userId, role, loginFailedCount: 1 }
+                        });
+                    }
+                    return done(null, false, { code: 401, message: invalidCredential() });
+                }
+
                 return done(null, { id: user.id, modelName: user.constructor.name, role: user.constructor.name.toLowerCase(), email: user.email });
+
             } catch (error) {
                 return done(error);
             }
@@ -59,22 +92,23 @@ passport.use(
 
 // Serialize user
 passport.serializeUser((user, done) => {
-    done(null, user); // Store id and model name
+    console.log("serializeUser", user);
+    // done(null, {
+    //     id: user.id,
+    //     role: user.role,
+    //     email: user.email,
+    //     modelName: user.modelName
+    // });
+    done(null, user);
 });
 
 // Deserialize user
 passport.deserializeUser(async (user, done) => {
     try {
-        let foundUser;
-        if (user.modelName === 'Doctor') {
-            foundUser = await Doctor.findByPk(user.id);
-        } else if (user.modelName === 'Patient') {
-            foundUser = await Patient.findByPk(user.id);
-        } else if (user.modelName === 'Admin') {
-            foundUser = await Admin.findByPk(user.id);
-        }
-        done(null, foundUser);
+        console.log("deserializeUser", user);
+        done(null, user);
     } catch (error) {
+        console.log("deserializeUser", error);
         done(error);
     }
 });
