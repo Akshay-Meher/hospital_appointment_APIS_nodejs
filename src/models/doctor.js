@@ -57,20 +57,23 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      profile_image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      degree: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      about: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      fees: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+      },
 
-      // otp: {
-      //   type: DataTypes.STRING,
-      //   allowNull: true,
-      // },
-      // otp_expiration: {
-      //   type: DataTypes.DATE,
-      //   allowNull: true,
-      // },
-      // is_email_verified: {
-      //   type: DataTypes.BOOLEAN,
-      //   allowNull: false,
-      //   defaultValue: false,
-      // },
       is_deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

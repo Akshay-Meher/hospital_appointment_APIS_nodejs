@@ -4,18 +4,33 @@ const { comparePassword, hashPassword } = require('../../services/comparePasswor
 const { executeModelMethod } = require('../../services/executeModelMethod');
 const { licenseDuplicate, emialExistsMessage, registeredSuccessfullyMessage, notFoundEmail, invalidCredential, loginSuccessful, tooManyfailedAttempts } = require('../../utils/responseMessages');
 const logger = require('../../utils/logger');
+const path = require('path');
+const fs = require('fs');
 
 
 exports.registerDoctor = async (req, res) => {
-    let { name, last_name, email, password, phone, gender, specialization, license_number, years_of_experience } = req.body;
+    let { name, last_name, email, password, phone, gender, specialization, license_number, years_of_experience, degree, fees, about } = req.body;
 
     try {
+
+        let profileImagePath = "/upload/profile-default.png"; // Default image 
+        if (req.file) {
+            const tempFilePath = req.file.path;
+            const uploadsDir = path.join(__dirname, "../../../public/upload/");
+            // Ensure uploads directory exists
+            if (!fs.existsSync(uploadsDir)) {
+                fs.mkdirSync(uploadsDir, { recursive: true });
+            }
+            const finalPath = path.join(uploadsDir, req.file.filename);
+            fs.renameSync(tempFilePath, finalPath);
+            profileImagePath = `/upload/${req.file.filename}`;
+        }
 
         password = await hashPassword(password);
         const modelWithMethod1 = {
             modelName: "Doctor",
             methodName: "create",
-            args: { name, last_name, email, password, phone, gender, specialization, license_number, years_of_experience }
+            args: { name, last_name, email, password, phone, gender, specialization, license_number, years_of_experience, degree, fees, profile_image: profileImagePath }
         };
 
         const doctor = await executeModelMethod(modelWithMethod1);
@@ -100,20 +115,84 @@ exports.loginDoctor = async (req, res) => {
 
 
 exports.getAllDoctors = async (req, res) => {
-    try {
+    // try {
 
+    //     const modelWithMethod = {
+    //         modelName: "Doctor",
+    //         methodName: "findAll",
+    //         args: { where: { is_deleted: false }, attributes: { exclude: ['password'] } }
+    //     };
+    //     const allPatient = await executeModelMethod(modelWithMethod);
+    //     return sendResponse(res, 'OK', null, allPatient);
+
+    // } catch (error) {
+    //     console.error("loginPatient Error:", err);
+    //     logger.error(`loginPatient : ${err.message}`);
+    //     return sendResponse(res, 'INTERNAL_SERVER_ERROR');
+    // }
+
+
+    try {
         const modelWithMethod = {
             modelName: "Doctor",
             methodName: "findAll",
-            args: { where: { is_deleted: false }, attributes: { exclude: ['password'] } }
+            args: {
+                where: { is_deleted: false },
+                attributes: { exclude: ['password'] }
+            }
         };
-        const allPatient = await executeModelMethod(modelWithMethod);
-        return sendResponse(res, 'OK', null, allPatient);
 
-    } catch (error) {
-        console.error("loginPatient Error:", err);
-        logger.error(`loginPatient : ${err.message}`);
+        let allDoctors = await executeModelMethod(modelWithMethod);
+
+        // Ensure profile_image is not null
+        allDoctors = allDoctors.map(doctor => {
+            return {
+                ...doctor.toJSON(),
+                profile_image: doctor.profile_image ? doctor.profile_image : "/upload/profile-default.png"
+            };
+        });
+
+        return sendResponse(res, 'OK', null, allDoctors);
+
+    } catch (err) {
+        console.error("getAllDoctors Error:", err);
+        logger.error(`getAllDoctors : ${err.message}`);
         return sendResponse(res, 'INTERNAL_SERVER_ERROR');
     }
 }
 
+
+exports.getDoctorById = async (req, res) => {
+    try {
+        const doctorId = req.params.id;
+
+        const modelWithMethod = {
+            modelName: "Doctor",
+            methodName: "findOne",
+            args: {
+                where: {
+                    id: doctorId,
+                    is_deleted: false
+                },
+                attributes: { exclude: ['password'] }
+            }
+        };
+
+        let doctor = await executeModelMethod(modelWithMethod);
+
+        if (!doctor) {
+            return sendResponse(res, 'NOT_FOUND', 'Doctor not found');
+        }
+
+        // Ensure profile_image is not null
+        doctor = doctor.toJSON();
+        doctor.profile_image = doctor.profile_image ? doctor.profile_image : "/upload/profile-default.png";
+
+        return sendResponse(res, 'OK', null, doctor);
+
+    } catch (err) {
+        console.error("getDoctorById Error:", err);
+        logger.error(`getDoctorById : ${err.message}`);
+        return sendResponse(res, 'INTERNAL_SERVER_ERROR');
+    }
+}

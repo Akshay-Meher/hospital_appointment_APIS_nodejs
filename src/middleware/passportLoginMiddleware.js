@@ -23,6 +23,10 @@ const passportAdminLoginMiddleware = (req, res, next) => {
             }
             return sendResponse(res, "OK", 'Login successful.', user);
         });
+
+
+        console.log("passportAdminLoginMiddleware");
+
     })(req, res, next);
 }
 

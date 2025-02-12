@@ -1,10 +1,11 @@
 const express = require('express');
-const { loginPatientRules, validateDoctor } = require('../validations/authValidation');
+const { loginPatientRules, validateDoctor, profileImageValidation } = require('../validations/authValidation');
 const checkValidationMidd = require('../middleware/checkValidationMiddleware');
-const { registerDoctor, loginDoctor, getAllDoctors, getAllAppointmentsOfDoctor } = require('../controllers/doctor/doctorController');
+const { registerDoctor, loginDoctor, getAllDoctors, getAllAppointmentsOfDoctor, getDoctorById } = require('../controllers/doctor/doctorController');
 const { checkDoctorExist } = require('../middleware/patientExistMiddleware');
 const isLoginMiddleware = require('../middleware/isLoginMiddleware');
 const { passportAdminLoginMiddleware } = require('../middleware/passportLoginMiddleware');
+const upload = require('../middleware/multer');
 
 
 const router = express.Router();
@@ -154,7 +155,7 @@ const router = express.Router();
  *                   example: Internal server error
  */
 
-router.post('/register', validateDoctor, checkValidationMidd, checkDoctorExist, registerDoctor);
+router.post('/register', upload.single("profile_image"), validateDoctor, profileImageValidation, checkValidationMidd, checkDoctorExist, registerDoctor);
 
 
 /**
@@ -351,5 +352,6 @@ router.post('/login', loginPatientRules, checkValidationMidd, passportAdminLogin
  */
 
 router.get('/getAll', isLoginMiddleware, getAllDoctors);
+router.get('/:id', isLoginMiddleware, getDoctorById);
 
 module.exports = router;

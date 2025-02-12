@@ -80,7 +80,8 @@ const sendLoginOTP = async (req, res) => {
 const verifyLoginOTP = async (req, res) => {
     try {
         const { email, otp, role } = req.body;
-
+        console.log("verifyLoginOTP", req.body);
+        console.log("type of", email, otp, role);
         // const role = req?.user?.role;
         // const modelName = role === 'patient' ? "Patient" : "Doctor";
         let modelName;
@@ -134,7 +135,7 @@ const verifyLoginOTP = async (req, res) => {
 
         const token = generateToken({ id: user.id, email: user.email, name: user?.name, role });
 
-        return sendResponse(res, "OK", loginSuccessful(), { token });
+        return sendResponse(res, "OK", loginSuccessful(), { id: user.id, email: user.email, name: user?.name, role });
 
         // await OTPRecord.update({ is_email_verified: true, otp: null, otpExpiration: null });
         return sendResponse(res, "OK", "email verified successfully");

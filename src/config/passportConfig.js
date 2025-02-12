@@ -81,7 +81,7 @@ passport.use(
                     return done(null, false, { code: 401, message: invalidCredential() });
                 }
 
-                return done(null, { id: user.id, modelName: user.constructor.name, role: user.constructor.name.toLowerCase(), email: user.email });
+                return done(null, { id: user.id, modelName: user.constructor.name, role: user.constructor.name.toLowerCase(), email: user.email, name: user.name });
 
             } catch (error) {
                 return done(error);

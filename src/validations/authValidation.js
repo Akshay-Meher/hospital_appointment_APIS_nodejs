@@ -74,9 +74,25 @@ const validateDoctor = [
         .optional()
         .trim()
         .toInt()
-        .isInt({ min: 0 }).withMessage(years_of_experience('years_of_experience'))
+        .isInt({ min: 0 }).withMessage(years_of_experience('years_of_experience')),
     // .isInt().withMessage('Years of experience must be an integer')
     // .isInt({ min: 0 }).withMessage('Years of experience cannot be negative'),
+    // Degree validation (Optional)
+    body("degree")
+        .optional()
+        .isString().withMessage("Degree must be a string")
+        .isLength({ min: 2 }).withMessage("Degree must be at least 2 characters long"),
+
+    // About validation (Optional)
+    body("about")
+        .optional()
+        .isString().withMessage("About must be a string")
+        .isLength({ max: 500 }).withMessage("About section must be less than 500 characters"),
+
+    // Fees validation (Optional)
+    body("fees")
+        .optional()
+        .isFloat({ min: 0 }).withMessage("Fees must be a positive number"),
 
 ];
 
@@ -355,9 +371,33 @@ const validateCreateOrder = [
 
 
 
+const profileImageValidation = body("profile_image").custom((value, { req }) => {
+    if (!req.file) {
+        req.body.profile_image = "/uploads/profile-default.svg"; // Set default image path
+        return true; // If no file is uploaded, allow it (optional field)
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+        throw new Error("Only images (jpeg, jpg, png) are allowed");
+    }
+
+    if (req.file.size > 5 * 1024 * 1024) {
+        throw new Error("Profile image must be less than 5MB");
+    }
+
+    return true;
+});
+
+// module.exports = { profileImageValidation };
+
+
+
+
 module.exports = {
     resetRules, loginPatientRules, validatePatient, validateDoctor, appointmentRules, saveTokenRules, getTokenRules,
     getAppointmentsRules, confirmAppointmentRules, verifyOTPRules, verifyOTPLenght, updatePatientRules, validateHospitalData,
     validateHospitalDataUpdate, validateAdmitPatientRules, validateCreateOrder, isDevEnv, verifyLoginOTPLenght, verifyLoginOTPRules,
-    validateAdmin, updateAdminRules, forgotPasswordSendToken, forgotPasswordResetRules, addDoctorstoHospital
+    validateAdmin, updateAdminRules, forgotPasswordSendToken, forgotPasswordResetRules, addDoctorstoHospital,
+    profileImageValidation
 };

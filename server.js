@@ -5,11 +5,21 @@ const { handleServerError } = require('./src/middleware/errorHandlingMiddleware'
 const { setupLogging } = require('./src/services/setlogs');
 const passport = require('./src/config/passportConfig');
 const { sessionMiddleware } = require('./src/config/sessionStore');
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
+
+const corsOptions = {
+    origin: "http://localhost:5173", // Your React app's URL
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
+    // allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"], // Allowed headers
+    credentials: true, // Important: Allows credentials (cookies, auth headers)
+};
+app.use(cors(corsOptions));
+
 
 app.use(sessionMiddleware);
 
