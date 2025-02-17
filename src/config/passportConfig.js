@@ -1,11 +1,14 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const CustomStrategy = require('passport-custom').Strategy;
 const bcrypt = require('bcryptjs');
 const { Doctor, Patient, Admin } = require('../models'); // Import models
 const { roleRules } = require('../validations/commonValidations');
 const { comparePassword } = require('../services/comparePassword');
 const { executeModelMethod } = require('../services/executeModelMethod');
-const { tooManyfailedAttempts, invalidCredential } = require('../utils/responseMessages');
+const { tooManyfailedAttempts, invalidCredential, notFound, invalidOTP } = require('../utils/responseMessages');
+const logger = require('../utils/logger');
+const { Op, where } = require('sequelize');
 
 passport.use(
     'local-login',
@@ -112,5 +115,95 @@ passport.deserializeUser(async (user, done) => {
         done(error);
     }
 });
+
+
+
+passport.use(
+    'otp-login',
+    new CustomStrategy(async (req, done) => {
+        try {
+            const { email, otp, role } = req.body;
+
+            let modelName;
+            if (role == 'patient') {
+                modelName = "Patient"
+            } else if (role == 'doctor') {
+                modelName = "Doctor"
+            } else if (role == 'admin') {
+                modelName = "Admin"
+            }
+            if (!modelName) {
+                return done(null, false, { code: 404, message: 'User not found' });
+            }
+
+            const user = await executeModelMethod({
+                modelName,
+                methodName: "findOne",
+                args: {
+                    where: {
+                        email,
+                        is_deleted: false,
+                        // otp,
+                        // otp_expiration: { [Op.gt]: new Date() }
+                    }
+                }
+            });
+
+
+            if (!user) {
+                return done(null, false, { code: 404, message: notFound(role + " User") });
+            }
+
+            const OTPRecord = await executeModelMethod({
+                modelName: "LoginOtp",
+                methodName: "findOne",
+                args: {
+                    where: {
+                        userId: user.id,
+                        role,
+                        is_deleted: false,
+                        otp,
+                        otpExpiration: { [Op.gt]: new Date() }
+                    }
+                }
+            });
+
+
+            if (!OTPRecord) {
+                return done(null, false, { code: 400, message: invalidOTP("OTP") });
+            }
+
+            return done(null, {
+                id: user.id,
+                modelName: user.constructor.name,
+                role: user.constructor.name.toLowerCase(),
+                email: user.email,
+                name: user.name
+            });
+
+        } catch (error) {
+            console.log("err in otp-login", error);
+            return done(error);
+        }
+    })
+);
+
+// Serialize user
+passport.serializeUser((user, done) => {
+    console.log("serializeUser", user);
+    done(null, user);
+});
+
+// Deserialize user
+passport.deserializeUser(async (user, done) => {
+    try {
+        console.log("deserializeUser", user);
+        done(null, user);
+    } catch (error) {
+        console.log("deserializeUser", error);
+        done(error);
+    }
+});
+
 
 module.exports = passport;

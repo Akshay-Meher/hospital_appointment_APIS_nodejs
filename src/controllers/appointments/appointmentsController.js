@@ -107,7 +107,9 @@ const bookAppointment = async (req, res) => {
 
 
 const getAppointments = async (req, res) => {
-    const { role, id } = req.body;
+    const { role, id } = req.query;
+
+    console.log("req.query", req.query);
 
     try {
         const modelName = role === 'patient' ? 'Patient' : 'Doctor';

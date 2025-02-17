@@ -77,7 +77,7 @@ const sendLoginOTP = async (req, res) => {
     }
 };
 
-const verifyLoginOTP = async (req, res) => {
+const verifyLoginOTP = async (req, res, next) => {
     try {
         const { email, otp, role } = req.body;
         console.log("verifyLoginOTP", req.body);
@@ -136,9 +136,10 @@ const verifyLoginOTP = async (req, res) => {
         const token = generateToken({ id: user.id, email: user.email, name: user?.name, role });
 
         return sendResponse(res, "OK", loginSuccessful(), { id: user.id, email: user.email, name: user?.name, role });
+        // next();
 
         // await OTPRecord.update({ is_email_verified: true, otp: null, otpExpiration: null });
-        return sendResponse(res, "OK", "email verified successfully");
+        // return sendResponse(res, "OK", "email verified successfully");
 
     } catch (error) {
         logger.error(`Failed to verify OTP: ${error.message}`);

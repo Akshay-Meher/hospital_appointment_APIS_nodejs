@@ -90,19 +90,19 @@ const cancelAppointment = async (req, res) => {
             args: { where: { userId: user_id, role, is_deleted: false } }
         });
 
-        if (!token) {
-            return sendResponse(res, 'NOT_FOUND', notFound('FirebaseToken'));
-        }
+        // if (!token) {
+        //     return sendResponse(res, 'NOT_FOUND', notFound('FirebaseToken'));
+        // }
 
-        const message = {
-            notification: {
-                title: cancelledSuccessfully("Appointment"),
-                body: cancelledSuccessfully("Appointment"),
-                "token": token?.token
-            },
+        // const message = {
+        //     notification: {
+        //         title: cancelledSuccessfully("Appointment"),
+        //         body: cancelledSuccessfully("Appointment"),
+        //         "token": token?.token
+        //     },
 
-        }
-        sendFirebaseNotification(message);
+        // }
+        // sendFirebaseNotification(message);
 
         return sendResponse(res, 'OK', cancelledSuccessfully("Appointment"), updatedAppointment);
 

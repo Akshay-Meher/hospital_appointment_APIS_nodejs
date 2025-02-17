@@ -302,7 +302,8 @@ router.post('/cancle', confirmAppointmentRules, checkValidationMidd, isLoginMidd
  *         description: Internal server error.
  */
 
-router.get('/get-details', getAppointmentsRules, checkValidationMidd, getAppointments);
+// router.get('/get-details/:id/:role', getAppointmentsRules, checkValidationMidd, getAppointments);
+router.get('/get-details', getAppointments);
 
 
 module.exports = router;
